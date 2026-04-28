@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="theme-color" content="#080f1e"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <title>🚨 Экстренная первая помощь</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    html, body, #root { margin: 0; padding: 0; height: 100%; background: #080f1e; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ═══════════════════════════════════════════════
+   КОНФИГУРАЦИЯ — замените на реальные данные
+═══════════════════════════════════════════════ */
+const CFG = {
+  emergencyNumber: "112",
+  specialistVideoUrl: "https://your-hospital.ru/emergency-call",
+  specialistPhone: "+7XXXXXXXXXX",
+};
+
+/* ═══════════════════════════════════════════════
+   ТОКЕНЫ ДИЗАЙНА
+═══════════════════════════════════════════════ */
+const C = {
+  bg: "#080f1e", surface: "#0d1830", card: "#111f3a",
+  cardHover: "#162548", border: "#1c3260",
+  red: "#ff3a30", redBg: "#1a0d0c",
+  green: "#32d560", greenBg: "#0a1810",
+  yellow: "#ffd60a", yellowBg: "#181400",
+  blue: "#0a84ff", blueBg: "#0b1a2e",
+  orange: "#ff9500", orangeBg: "#1a1200",
+  text: "#f0f4ff", textSec: "#8a9cbf", textMuted: "#4a5a78",
+};
+
+/* ═══════════════════════════════════════════════
+   ГЛОБАЛЬНЫЕ СТИЛИ
+═══════════════════════════════════════════════ */
+const CSS = `
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{font-family:'Manrope',-apple-system,system-ui,sans-serif;background:${C.bg};color:${C.text};min-height:100vh;-webkit-font-smoothing:antialiased;}
+.screen{min-height:100vh;display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
+.body{flex:1;padding:20px 16px;overflow-y:auto;}
+.footer{padding:12px 16px 20px;background:${C.bg};border-top:1px solid ${C.border};position:sticky;bottom:0;}
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;padding:12px 16px 10px;background:${C.bg};position:sticky;top:0;z-index:20;border-bottom:1px solid ${C.border};}
+.back{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:${C.card};border:1px solid ${C.border};cursor:pointer;font-size:18px;color:${C.text};flex-shrink:0;}
+.hdr-t{font-weight:800;font-size:17px;flex:1;line-height:1.2;}
+.hdr-s{font-size:11px;color:${C.textSec};margin-top:1px;}
+.e112{display:flex;align-items:center;gap:5px;padding:7px 12px;background:${C.red};border-radius:20px;font-weight:800;font-size:13px;text-decoration:none;color:#fff;flex-shrink:0;}
+/* PROGRESS */
+.pb{height:3px;background:${C.border};margin:0 16px 8px;border-radius:2px;overflow:hidden;}
+.pf{height:100%;background:${C.blue};border-radius:2px;transition:width .35s;}
+/* BUTTONS */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px 20px;border:none;border-radius:14px;cursor:pointer;font-family:'Manrope',sans-serif;font-weight:700;font-size:16px;transition:transform .1s,opacity .2s;min-height:52px;text-decoration:none;}
+.btn:active{transform:scale(.97);}
+.btn-red{background:${C.red};color:#fff;}
+.btn-sec{background:${C.card};color:${C.text};border:1px solid ${C.border};}
+.btn-grn{background:${C.green};color:#000;}
+.btn-blu{background:${C.blue};color:#fff;}
+.btn-ghost{background:transparent;color:${C.textSec};font-weight:600;}
+.btn:disabled{opacity:.35;pointer-events:none;}
+/* OPTION CARDS */
+.opts{display:grid;gap:10px;margin-top:12px;}
+.opt{display:flex;align-items:center;gap:14px;padding:16px;background:${C.card};border-radius:14px;border:2px solid transparent;cursor:pointer;transition:border-color .15s,background .15s;min-height:72px;width:100%;text-align:left;}
+.opt:active{background:${C.cardHover};}
+.opt.sel{border-color:${C.blue};background:${C.blueBg};}
+.opt-ico{font-size:30px;width:42px;text-align:center;flex-shrink:0;}
+.opt-lbl{font-weight:700;font-size:15px;line-height:1.3;color:${C.text};}
+.opt-sub{font-size:12px;color:${C.textSec};margin-top:2px;line-height:1.4;}
+/* STEP CARDS */
+.step{background:${C.card};border-radius:16px;padding:18px;margin-bottom:12px;border:1px solid ${C.border};border-left:4px solid ${C.blue};animation:fadeIn .3s ease;}
+.step.hr{border-left-color:${C.red};background:${C.redBg};}
+.step.hy{border-left-color:${C.yellow};background:${C.yellowBg};}
+.step.hg{border-left-color:${C.green};background:${C.greenBg};}
+.step.ho{border-left-color:${C.orange};background:${C.orangeBg};}
+.snum{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:${C.blue};color:#fff;font-weight:900;font-size:12px;flex-shrink:0;}
+.stit{font-weight:800;font-size:16px;margin-bottom:6px;}
+.stxt{font-size:13.5px;color:${C.textSec};line-height:1.65;white-space:pre-wrap;}
+/* TIMER */
+.tmr{display:flex;align-items:center;justify-content:space-between;background:${C.bg};border:1px solid ${C.border};border-radius:12px;padding:12px 14px;margin-top:12px;}
+.tmrd{font-size:34px;font-weight:900;font-variant-numeric:tabular-nums;color:${C.green};}
+.tmrl{font-size:11px;color:${C.textSec};margin-top:2px;}
+.tmrb{padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-family:'Manrope',sans-serif;font-weight:700;font-size:13px;background:${C.green};color:#000;}
+.tmrb.run{background:${C.red};color:#fff;}
+/* DIAGNOSIS */
+.dcard{border-radius:20px;padding:22px;margin-bottom:16px;text-align:center;}
+.dico{font-size:54px;margin-bottom:10px;}
+.dtit{font-size:22px;font-weight:900;margin-bottom:5px;}
+.dsub{font-size:13px;opacity:.8;}
+.dbadge{display:inline-flex;padding:5px 14px;border-radius:20px;font-weight:700;font-size:12px;margin-top:10px;}
+/* RHYTHM */
+.rsel{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.rbtn{padding:14px 10px;border-radius:12px;border:2px solid ${C.border};background:${C.card};cursor:pointer;text-align:center;font-family:'Manrope',sans-serif;color:${C.text};transition:all .15s;}
+.rbtn.sel{border-color:${C.blue};background:${C.blueBg};}
+.rbico{font-size:24px;margin-bottom:4px;}
+.rblbl{font-weight:800;font-size:14px;}
+.rbsub{font-size:11px;color:${C.textSec};margin-top:2px;}
+/* MISC */
+.banner{display:flex;align-items:flex-start;gap:10px;background:${C.blueBg};border:1px solid #1a3a5a;border-radius:12px;padding:14px;margin-bottom:16px;}
+.sec-t{font-size:12px;font-weight:700;color:${C.textSec};text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.pulse{animation:pulse 2s infinite;}
+`;
+
+/* ═══════════════════════════════════════════════
+   ПРОТОКОЛЫ
+═══════════════════════════════════════════════ */
+const P = {
+  cardiac_arrest: {
+    id: "cardiac_arrest", title: "Остановка сердца", icon: "🫀",
+    color: C.red, severity: "critical",
+    basic: {
+      intro: "Немедленно позвоните 112. Начните CPR прямо сейчас.",
+      steps: [
+        { id:1, icon:"⚠️", title:"Безопасность", text:"Убедитесь, что место безопасно для вас и пациента." },
+        { id:2, icon:"👋", title:"Проверьте реакцию", text:"Похлопайте по плечам, громко спросите: «Вы меня слышите?»\nНет ответа → к следующему шагу." },
+        { id:3, icon:"📞", title:"ЗВОНИТЕ 112", text:"Вызовите скорую НЕМЕДЛЕННО. Попросите кого-то найти AED (дефибриллятор).\nЕсли один — сначала звоните, потом помогаете.", hl:"r" },
+        { id:4, icon:"🛏️", title:"Положение пациента", text:"Уложите на спину на твёрдую ровную поверхность.\nЗапрокиньте голову назад, поднимите подбородок — открытие дыхательных путей." },
+        { id:5, icon:"🤲", title:"Начните компрессии!", text:"Основание ладони — ЦЕНТР груди (нижняя половина грудины).\nВторая рука сверху, пальцы в замок. Руки прямые.\n▸ Глубина ≥5 см\n▸ Частота 100–120/мин (ритм «Stayin' Alive»)\n▸ Полное расправление груди между компрессиями", hl:"r", timer:120, timerLabel:"2 минуты CPR" },
+        { id:6, icon:"💨", title:"30 компрессий : 2 вдоха", text:"После 30 компрессий — 2 вдоха:\n• Зажмите нос, охватите рот губами\n• Вдувайте 1 секунду до подъёма груди\n\nНЕ УВЕРЕНЫ в технике? Делайте только компрессии — это тоже эффективно!" },
+        { id:7, icon:"⚡", title:"Использование AED", text:"Включите AED → следуйте голосовым инструкциям.\nПриклейте электроды как на картинке.\nПосле разряда → СРАЗУ продолжайте компрессии!", hl:"y" },
+        { id:8, icon:"🔄", title:"Не останавливайтесь", text:"Продолжайте CPR до приезда скорой.\nМеняйтесь каждые 2 минуты если есть помощники.\nОстановитесь только если пациент задвигался или нормально задышал." },
+      ],
+    },
+    medical: {
+      intro: "AHA 2025 ACLS. Высококачественный CPR — приоритет. Минимизировать паузы.",
+      shockable: [
+        { id:1, icon:"🫁", title:"Старт CPR", text:"Мешок-маска + О₂. Монитор/дефибриллятор.\nКомпрессии ≥5 см, 100–120/мин. Соотношение 30:2 (без продвинутых ДП).\nПри продвинутых ДП: непрерывные компрессии + 1 вдох каждые 6 сек.", timer:120, timerLabel:"2 мин CPR" },
+        { id:2, icon:"⚡", title:"Дефибрилляция (VF/pVT)", text:"Бифазный: 120–200 Дж (или максимальный)\nМонофазный: 360 Дж\nПосле разряда → НЕМЕДЛЕННО продолжить CPR 2 мин.", hl:"o" },
+        { id:3, icon:"💉", title:"IV/IO доступ + Адреналин", text:"Адреналин 1 мг IV/IO — как можно скорее.\nПовторять каждые 3–5 мин.\nРассмотреть продвинутые ДП + капнографию (ETCO₂).", hl:"r" },
+        { id:4, icon:"💊", title:"Амиодарон или Лидокаин", text:"При рефрактерной VF/pVT:\n▸ Амиодарон: 300 мг болюс IV/IO → 150 мг (2-я доза)\n   ИЛИ\n▸ Лидокаин: 1–1.5 мг/кг → 0.5–0.75 мг/кг (2-я доза)" },
+        { id:5, icon:"🔍", title:"Обратимые причины (4Г+4Т)", text:"4Г: Гиповолемия · Гипоксия · Г⁺ ион (ацидоз) · Гипо/гиперКалиемия · Гипотермия\n4Т: Тампонада · Тензионный пневмоторакс · Токсины · Тромбоз (ТЭЛА/ОКС)" },
+        { id:6, icon:"🏥", title:"При ROSC → Пост-реанимационная помощь", text:"SpO₂ 90–98% · PaCO₂ 35–45 · MAP ≥65 мм рт.ст.\nЭКГ 12 отведений · КТ · Контроль t° 32–37.5°C\nЭЭГ при отсутствии сознания · Избегать гипогликемии", hl:"g" },
+      ],
+      nonShockable: [
+        { id:1, icon:"🫁", title:"Старт CPR + IV/IO", text:"Мешок-маска + О₂. Монитор. IV/IO доступ.\nКомпрессии ≥5 см, 100–120/мин.", timer:120, timerLabel:"2 мин CPR" },
+        { id:2, icon:"💊", title:"Адреналин НЕМЕДЛЕННО", text:"Адреналин 1 мг IV/IO — КАК МОЖНО СКОРЕЕ.\nПовторять каждые 3–5 мин.\nETCO₂ ≥10 мм рт.ст. → признак качественного CPR.", hl:"r" },
+        { id:3, icon:"💨", title:"Продвинутые дыхательные пути", text:"ЭТТ или надгортанное устройство.\nВнимание! После установки ДП → непрерывные компрессии + 1 вдох / 6 сек.\nКвантитативная капнография." },
+        { id:4, icon:"🔍", title:"Обратимые причины (4Г+4Т)", text:"Гиповолемия (болюс жидкости) · Гипоксия (интубация) · Ацидоз · Гиперкалиемия\nТампонада (перикардиоцентез) · Тензионный пневмоторакс (игла 2-е межреберье) · Токсины · Тромбоэмболия" },
+        { id:5, icon:"📊", title:"Оценка эффективности", text:"ETCO₂ стойко <10 мм рт.ст. → неоптимальный CPR → переоценить.\nПри ROSC → пост-реанимационная помощь.\nОценить уместность продолжения реанимации." },
+      ],
+    },
+  },
+
+  cardiac_arrest_pediatric: {
+    id: "cardiac_arrest_pediatric", title: "Остановка сердца (ребёнок)", icon: "🧒",
+    color: C.red, severity: "critical",
+    basic: {
+      intro: "Дети: причина часто дыхательная. 2 минуты CPR → вызов 112 (если нет свидетелей коллапса).",
+      steps: [
+        { id:1, icon:"⚠️", title:"Безопасность и оценка", text:"Убедитесь в безопасности. Проверьте реакцию (похлопайте по плечу).\nНет ответа + нет дыхания/только хрипы → действуйте." },
+        { id:2, icon:"📞", title:"Вызов помощи", text:"ОДИН СПАСАТЕЛЬ:\n• Сначала 2 мин CPR → потом 112 (если нет свидетелей)\n• При внезапном witnessed коллапсе → сначала AED/112\n\nДВА СПАСАТЕЛЯ:\n• Один начинает CPR, второй звонит 112 и ищет AED.", hl:"y" },
+        { id:3, icon:"💨", title:"Открыть дыхательные пути → 2 спасательных вдоха", text:"Запрокинуть голову + поднять подбородок.\nДать 2 вдоха: грудь должна подниматься.\n\nМладенцы: охватить рот И нос.", hl:"r" },
+        { id:4, icon:"🤲", title:"Компрессии", text:"МЕСТО:\n• Младенец (до 1 года): 2 пальца на 1 палец ниже центра грудины, ИЛИ 2 больших пальца охватом груди (если 2 спасателя)\n• Ребёнок: 1–2 ладони, центр груди\n\nГЛУБИНА: ≥1/3 глубины груди (~4–5 см)\nЧАСТОТА: 100–120/мин", timer:120, timerLabel:"2 минуты CPR" },
+        { id:5, icon:"🔢", title:"Соотношение", text:"1 спасатель: 30 компрессий + 2 вдоха\n2 спасателя (допубертат): 15 компрессий + 2 вдоха" },
+        { id:6, icon:"⚡", title:"AED для ребёнка", text:"До 8 лет / <25 кг: педиатрические электроды/режим (если есть).\nЕсли нет → используйте взрослый режим." },
+        { id:7, icon:"🔄", title:"Не останавливайтесь", text:"Продолжайте до прибытия медиков. Меняйтесь каждые 2 мин." },
+      ],
+    },
+    medical: {
+      intro: "AHA/AAP 2025 PALS. Преимущественно дыхательный арест. Оксигенация — приоритет.",
+      shockable: [
+        { id:1, icon:"🫁", title:"CPR + Оксигенация", text:"Мешок-маска + О₂. Монитор/дефибриллятор.\n1 спасатель: 30:2 | 2 спасателя (допубертат): 15:2\nПри продвинутых ДП: непрерывные компрессии + 1 вдох каждые 2–3 сек.", timer:120 },
+        { id:2, icon:"⚡", title:"Дефибрилляция (VF/pVT)", text:"1-й разряд: 2 Дж/кг\n2-й разряд: 4 Дж/кг\nПоследующие: ≥4 Дж/кг (макс. 10 Дж/кг или взрослая доза)\nПосле разряда → немедленно продолжить CPR 2 мин.", hl:"o" },
+        { id:3, icon:"💊", title:"Адреналин IV/IO", text:"0.01 мг/кг (конц. 0.1 мг/мл). Макс. 1 мг.\nКаждые 3–5 мин. ETCO₂ мониторинг.", hl:"r" },
+        { id:4, icon:"💊", title:"Амиодарон или Лидокаин", text:"Амиодарон 5 мг/кг IV/IO болюс\n(макс. 1-я доза 300 мг, последующие 150 мг, до 3 доз)\n   ИЛИ\nЛидокаин 1 мг/кг IV/IO" },
+        { id:5, icon:"🔍", title:"Обратимые причины у детей", text:"ОСОБО: Гипогликемия (!), Гипоксия (первична!), Гиповолемия\nТакже: Тампонада, Пневмоторакс, Токсины, Гипотермия, Гипо/гиперКалиемия" },
+      ],
+      nonShockable: [
+        { id:1, icon:"🫁", title:"CPR + IV/IO", text:"Мешок-маска + О₂. Монитор. IV/IO доступ.\nПедиатрические соотношения CPR.", timer:120 },
+        { id:2, icon:"💊", title:"Адреналин НЕМЕДЛЕННО", text:"0.01 мг/кг IV/IO каждые 3–5 мин (макс. 1 мг).\nЗапустить ETCO₂ мониторинг.", hl:"r" },
+        { id:3, icon:"🔍", title:"Обратимые причины", text:"Гипоксия → интубация!\nГипогликемия → глюкоза в/в!\nГиповолемия → болюс 20 мл/кг физ. р-ра\nТампонада, Пневмоторакс, Токсины" },
+        { id:4, icon:"📊", title:"Оценка и ROSC", text:"При ROSC → педиатрическая пост-реанимационная помощь.\nSpO₂ 94–99%, нормовентиляция, избегать гипер/гипогликемии." },
+      ],
+    },
+  },
+
+  cardiac_arrest_pregnancy: {
+    id: "cardiac_arrest_pregnancy", title: "Остановка сердца при беременности", icon: "🤰",
+    color: C.red, severity: "critical",
+    basic: {
+      intro: "Стандартный CPR + смещение матки влево + срочный вызов акушерской бригады.",
+      steps: [
+        { id:1, icon:"📞", title:"ЗВОНИТЕ 112 — беременная!", text:"Сообщите диспетчеру, что пациентка беременна.\nНеобходима акушерская + реанимационная бригада.", hl:"r" },
+        { id:2, icon:"🤲", title:"Стандартный CPR", text:"30 компрессий + 2 вдоха. Центр груди. ≥5 см. 100–120/мин.\nНЕ меняйте технику из-за беременности.", timer:120, timerLabel:"2 мин CPR" },
+        { id:3, icon:"↩️", title:"Смещение матки влево", text:"Если живот большой (дно матки ≥ уровня пупка):\nОДНОЙ РУКОЙ смещайте матку влево — снимает давление на полую вену.\nМожно делать одновременно с CPR (второй помощник).", hl:"y" },
+        { id:4, icon:"💨", title:"Дыхательные пути", text:"У беременных трудные дыхательные пути чаще!\nПоддерживайте проходимость ДП до прибытия бригады." },
+        { id:5, icon:"⚡", title:"AED — безопасен!", text:"Используйте AED как обычно. Дефибрилляция безопасна для матери и плода." },
+      ],
+    },
+    medical: {
+      intro: "AHA 2025. Параллельно: CPR + смещение матки + подготовка к родоразрешению.",
+      shockable: [
+        { id:1, icon:"🤲", title:"BLS/ALS + смещение матки", text:"Высококачественный CPR. Непрерывное ручное смещение матки влево при высоте дна ≥ пупка.\n30:2 или непрерывные при продвинутых ДП.", timer:120 },
+        { id:2, icon:"👥", title:"Активировать команду", text:"Команда: анестезиолог + акушер + неонатолог + медсёстры + фармацевт.\n\nОТКЛЮЧИТЬ мониторы плода.\nIV доступ ВЫШЕ диафрагмы.\nСтандартные дозы адреналина и других препаратов.", hl:"y" },
+        { id:3, icon:"⚡", title:"Дефибрилляция (VF/pVT)", text:"Стандартный протокол ACLS.\nБифазный 120–200 Дж. Безопасна при беременности.\nПосле разряда → немедленно CPR.", hl:"o" },
+        { id:4, icon:"💊", title:"Причины (ABCDEFGH)", text:"A — Анестетики\nB — Кровотечение\nC — Кардиоваскулярные\nD — Медикаменты\nE — Эмболия (амниот. жидкость, ТЭЛА)\nF — Лихорадка\nG — Общие причины (4Г+4Т)\nH — Гипертензия (преэклампсия)" },
+        { id:5, icon:"⚠️", title:"Сульфат магния → Кальций", text:"При терапии MgSO₄:\nНЕМЕДЛЕННО прекратить + ввести кальций:\n• Глюконат Ca 1 г IV (10 мл 10%)\n  или\n• Хлорид Ca 0.5 г IV (5 мл 10%)", hl:"r" },
+        { id:6, icon:"🏥", title:"Экстренное родоразрешение", text:"Если нет ROSC к 5-й минуте:\nЦЕЛЬ — родоразрешение в течение 5 мин от начала остановки.\nЭкстренное кесарево сечение у постели пациентки.\nЦель: улучшить исход матери + новорождённого.", hl:"o" },
+      ],
+      nonShockable: [
+        { id:1, icon:"🤲", title:"CPR + смещение матки", text:"Как при шоковом ритме (шаги 1–2), без дефибрилляции.\nПродолжить адреналин 1 мг каждые 3–5 мин.", timer:120 },
+        { id:2, icon:"💊", title:"Адреналин + причины", text:"Адреналин 1 мг IV/IO ASAP каждые 3–5 мин.\nЛечить обратимые причины по ABCDEFGH.", hl:"r" },
+        { id:3, icon:"🏥", title:"Экстренное родоразрешение", text:"При отсутствии ROSC к 5-й минуте → экстренное КС.\nКоманда должна быть готова с первой минуты реанимации.", hl:"o" },
+      ],
+    },
+  },
+
+  fbao_adult: {
+    id: "fbao_adult", title: "Инородное тело в дыхательных путях", icon: "😮‍💨",
+    color: C.orange, severity: "urgent",
+    basic: {
+      intro: "2025 AHA. Тяжёлая обструкция — действуйте немедленно!",
+      steps: [
+        { id:1, icon:"🔍", title:"Оцените тяжесть", text:"ЛЁГКАЯ (действовать не нужно сейчас):\n• Может кашлять, говорить, дышать → СТИМУЛИРУЙТЕ КАШЕЛЬ, наблюдайте\n\nТЯЖЁЛАЯ (действуйте немедленно):\n• Не может говорить / слабый/нет кашля\n• Синеет / теряет сознание / хватается за горло" },
+        { id:2, icon:"📞", title:"Позвоните 112", text:"При тяжёлой обструкции → вызовите 112 (попросите кого-то, не прекращайте помощь).", hl:"r" },
+        { id:3, icon:"👊", title:"5 ударов по спине", text:"Встаньте сбоку и чуть сзади.\nОдной рукой опирайте грудь, наклоните вперёд.\nНанесите 5 СИЛЬНЫХ ударов основанием ладони между лопатками.\nПроверьте — предмет вышел?" },
+        { id:4, icon:"🤜", title:"5 абдоминальных толчков (Хаймлих)", text:"Встаньте позади, обхватите руками.\nКулак — чуть ВЫШЕ пупка, НИЖЕ рёберной дуги.\nОхватите кулак второй рукой.\nРезкие толчки ВНУТРЬ И ВВЕРХ × 5\nПроверьте — предмет вышел?" },
+        { id:5, icon:"🔄", title:"Чередуйте!", text:"5 ударов по спине + 5 толчков Хаймлиха\nЧередуйте до:\n✓ Предмет вышел — наблюдайте\n✗ Пациент теряет сознание → шаг 6" },
+        { id:6, icon:"🤲", title:"Потерял сознание → CPR", text:"Осторожно опустите на пол.\nНЕМЕДЛЕННО начните CPR (30:2).\nПеред каждым вдохом — осматривайте рот:\nВидите предмет? Извлеките пальцем.\nНЕ делайте слепое зондирование!", hl:"r" },
+        { id:7, icon:"🤰", title:"При беременности / ожирении", text:"Вместо толчков в живот → 5 ТОЛЧКОВ В ГРУДЬ:\nПозиция рук как при CPR, но стоя позади пациента." },
+      ],
+    },
+    medical: {
+      intro: "AHA 2025. При неуспехе — прямая ларингоскопия и удаление щипцами Мэгилла.",
+      steps: [
+        { id:1, icon:"🔍", title:"Оценка обструкции", text:"Частичная: SpO₂ >90%, кашель → О₂, стимуляция кашля, наблюдение.\nПолная: нет голоса, SpO₂ падает, цианоз → немедленные действия.\nПри беременности/ожирении: толчки в грудь вместо Хаймлиха." },
+        { id:2, icon:"👊", title:"5+5 (стандарт BLS)", text:"5 ударов по спине + 5 толчков Хаймлиха (или в грудь при беременности).\nЧередовать до освобождения или потери сознания." },
+        { id:3, icon:"🔦", title:"Прямая ларингоскопия", text:"При доступности оборудования:\nПрямая ларингоскопия → удаление инородного тела щипцами Мэгилла.\nТолько под ВИЗУАЛЬНЫМ контролем — не вслепую!", hl:"y" },
+        { id:4, icon:"🤲", title:"Потеря сознания → CPR + ларингоскопия", text:"CPR по стандарту ACLS.\nПеред каждым вдохом → ларингоскопия для поиска и удаления ИТ.\nПри безуспешности → рассмотреть крикотиреотомию.", hl:"r" },
+      ],
+    },
+  },
+
+  fbao_child: {
+    id: "fbao_child", title: "Удушье у ребёнка/младенца", icon: "🧒",
+    color: C.orange, severity: "urgent",
+    basic: {
+      intro: "2025 AHA/AAP. Техника зависит от возраста! Младенцам — НЕ делать толчки в живот!",
+      steps: [
+        { id:1, icon:"🔍", title:"Оцените тяжесть", text:"Лёгкая: кашляет, плачет → стимулируйте кашель, наблюдайте.\nТяжёлая: слабый/нет кашля, синеет → действуйте немедленно." },
+        { id:2, icon:"📞", title:"Вызовите 112", text:"Попросите кого-то вызвать 112 или активируйте систему экстренного реагирования.", hl:"r" },
+        { id:3, icon:"👧", title:"Ребёнок старше 1 года", text:"КАК ВЗРОСЛОМУ:\n5 ударов по спине (между лопатками)\n+ 5 толчков в живот (Хаймлих, стоя позади)\nЧередовать до освобождения или потери сознания." },
+        { id:4, icon:"👶", title:"Младенец до 1 года — ИНАЧЕ!", text:"НИКАКИХ толчков в живот!\n\n5 УДАРОВ ПО СПИНЕ:\n• Держите лицом вниз на предплечье\n• Голова ниже туловища\n• 5 ударов основанием ладони между лопатками\n\n5 ТОЛЧКОВ В ГРУДЬ:\n• Переверните лицом вверх на предплечье\n• 2 пальца на центр груди (ниже линии сосков)\n• 5 резких толчков вглубь\n\nЧередовать!", hl:"y" },
+        { id:5, icon:"🤲", title:"Потеря сознания → Педиатрический CPR", text:"Положите на твёрдую поверхность.\nНачните педиатрический CPR.\nПеред каждым вдохом — осматривайте рот:\nВидите предмет? Извлеките." },
+      ],
+    },
+    medical: {
+      intro: "AHA/AAP 2025. Техника по возрасту + ларингоскопия при наличии оборудования.",
+      steps: [
+        { id:1, icon:"🔍", title:"Оценка и техника по возрасту", text:"Ребёнок >1 года: 5+5 (спина + Хаймлих) — как у взрослых.\nМладенец <1 года: 5 ударов по спине + 5 толчков в ГРУДЬ.\nЩипцы Мэгилла под прямой ларингоскопией при доступности." },
+        { id:2, icon:"🤲", title:"При потере сознания — PALS CPR", text:"Педиатрические соотношения CPR (15:2 при 2 спасателях, допубертат).\nОрганизовать контроль ДП: ЛМА или ЭТТ.\nПеред каждым вдохом — ларингоскопия." },
+      ],
+    },
+  },
+
+  bleeding: {
+    id: "bleeding", title: "Кровотечение", icon: "🩸",
+    color: C.red, severity: "urgent",
+    basic: {
+      intro: "Тяжёлое кровотечение опасно для жизни. Прямое давление — главный метод.",
+      steps: [
+        { id:1, icon:"📞", title:"Позвоните 112", text:"При тяжёлом/неостановимом кровотечении — вызовите 112.", hl:"r" },
+        { id:2, icon:"🧤", title:"Защитите себя", text:"Наденьте перчатки (если есть) или используйте полиэтиленовый пакет для защиты от крови." },
+        { id:3, icon:"🤲", title:"Прямое давление", text:"Прижмите рану чистой тканью, бинтом или одеждой.\nДавите СИЛЬНО и НЕПРЕРЫВНО.\nНе убирайте повязку — если пропиталась, добавьте слой сверху.", hl:"r", timer:600, timerLabel:"10 мин непрерывного давления" },
+        { id:4, icon:"🔴", title:"Жгут — только при кровотечении конечности", text:"При артериальном/неостановимом кровотечении конечности:\n• Жгут/турникет на 5–8 см ВЫШЕ раны\n• Затяните до остановки кровотечения\n• ЗАПИШИТЕ время наложения\n• Не снимайте до прибытия медиков", hl:"y" },
+        { id:5, icon:"🛏️", title:"Положение пациента", text:"Уложите удобно.\nПри признаках шока (бледность, холодная кожа, слабость, быстрый слабый пульс):\n→ Поднимите ноги на 30–45 см\nНЕ давайте есть, пить, курить." },
+        { id:6, icon:"👁️", title:"Наблюдайте", text:"Контролируйте дыхание и сознание.\nПотеря сознания + нет пульса → CPR." },
+      ],
+    },
+    medical: {
+      intro: "Оценить источник, класс кровопотери. Damage control hemostasis.",
+      steps: [
+        { id:1, icon:"🤲", title:"Механический гемостаз", text:"Прямое давление.\nКонечность: жгут 5–8 см выше раны (турникет).\nТуловище/пах: гемостатический агент (Combat Gauze, ChitoGauze) + тугая тампонада.", hl:"r" },
+        { id:2, icon:"💉", title:"IV доступ + жидкости", text:"2 периферических катетера большого диаметра.\nПермиссивная гипотония при тупой травме: SBP 80–90 мм рт.ст.\nПри проникающей травме: минимальная инфузия до хирургического контроля.\nНЕ перегружать кристаллоидами." },
+        { id:3, icon:"💊", title:"Транексамовая кислота", text:"При травматическом кровотечении в первые 3 часа:\nТранексамовая кислота 1 г IV в течение 10 мин → затем 1 г за 8 ч.", hl:"b" },
+        { id:4, icon:"🩸", title:"Протокол массивной трансфузии", text:"СЗП : ЭМ = 1:1 (или 1:1:1 с тромбоцитами).\nЦелевой Hb > 70 г/л, фибриноген > 1.5 г/л.\nКальций при массивной трансфузии." },
+        { id:5, icon:"🏥", title:"Хирургия", text:"Неконтролируемое внутреннее кровотечение → экстренная операция.\nDamage control surgery при гемодинамической нестабильности." },
+      ],
+    },
+  },
+
+  syncope: {
+    id: "syncope", title: "Обморок / Коллапс", icon: "💫",
+    color: C.blue, severity: "moderate",
+    basic: {
+      intro: "Есть пульс, есть дыхание. Кратковременная потеря сознания — синкопе.",
+      steps: [
+        { id:1, icon:"🙌", title:"Предотвратите травму", text:"Поддержите пациента при падении. Уберите острые предметы поблизости." },
+        { id:2, icon:"🛏️", title:"Уложите горизонтально", text:"Уложите на спину.\nПоднимите ноги на 30–45 см (если нет травм ног/позвоночника).\nЭто улучшит приток крови к мозгу." },
+        { id:3, icon:"💨", title:"Обеспечьте воздух", text:"Расстегните тесную одежду (воротник, ремень).\nОбеспечьте свежий воздух, попросите толпу отойти." },
+        { id:4, icon:"👁️", title:"Следите за дыханием", text:"Контролируйте дыхание каждые 30 секунд.\nЕсли нет дыхания или пульса → немедленно начните CPR." },
+        { id:5, icon:"📞", title:"Вызовите 112 если:", text:"• Не приходит в сознание > 1 минуты\n• Есть травмы при падении\n• Это первый эпизод в жизни\n• Пожилой человек или есть сердечная патология\n• Обморок при физической нагрузке", hl:"y" },
+        { id:6, icon:"🪑", title:"После прихода в сознание", text:"Не давайте вставать резко — постепенно: лёжа → сидя → стоя.\nСпросите об истории болезни, принимаемых лекарствах.\nПри рецидиве → 112." },
+      ],
+    },
+    medical: {
+      intro: "Исключить жизнеугрожающие причины: аритмия, ТЭЛА, расслоение аорты, ОКС.",
+      steps: [
+        { id:1, icon:"🔍", title:"Оценка ABC + мониторинг", text:"Дыхательные пути, дыхание, кровообращение.\nЧСС, АД, SpO₂, ЭКГ 12 отведений — ОБЯЗАТЕЛЬНО.\nГликемия (глюкоза!). IV доступ." },
+        { id:2, icon:"📊", title:"Дифференциальная диагностика", text:"• Вазовагальный: ситуационный, продромальные симптомы (тошнота, потливость)\n• Ортостатический: при смене положения, дегидратация/лекарства\n• Кардиогенный (!): аритмия, структурная патология → ЭКГ обязательна\n• Неврологический: очаговые симптомы, длительная потеря сознания\n• Метаболический: гипогликемия, гипоксия" },
+        { id:3, icon:"📈", title:"Когда ЭКГ особенно важна", text:"ЭКГ ОБЯЗАТЕЛЬНА при:\n• Возраст >40 лет\n• Кардиальная патология в анамнезе\n• Обморок при физической нагрузке\n• Без продромальных симптомов\n• Во время сна или лёжа\n• Семейный анамнез внезапной смерти", hl:"y" },
+        { id:4, icon:"💊", title:"Специфическое лечение", text:"Гипогликемия: глюкоза 40% — 40 мл IV\nБрадиаритмия: атропин 0.5–1 мг IV (по ACLS)\nТахиаритмия: по протоколу ACLS\nОртостатическая: физ. р-р 500 мл IV болюс" },
+      ],
+    },
+  },
+
+  bradycardia: {
+    id: "bradycardia", title: "Брадикардия с пульсом", icon: "📉",
+    color: C.yellow, severity: "urgent",
+    basic: {
+      intro: "Медленный пульс + симптомы — вызовите скорую немедленно.",
+      steps: [
+        { id:1, icon:"📞", title:"Позвоните 112", text:"При жалобах на головокружение, слабость, одышку, боль в груди с медленным пульсом → немедленно 112.", hl:"r" },
+        { id:2, icon:"🛏️", title:"Положение", text:"Усадите или уложите пациента удобно.\nНе позволяйте резко вставать." },
+        { id:3, icon:"👁️", title:"Наблюдайте", text:"Контролируйте сознание и дыхание.\nПотеря сознания + нет пульса → CPR." },
+      ],
+    },
+    medical: {
+      intro: "AHA 2025 ACLS. ЧСС <50/мин + симптомы гемодинамического компромисса.",
+      steps: [
+        { id:1, icon:"🔍", title:"Оценка + поддержка", text:"Обеспечить проходимость ДП + О₂ при необходимости.\nМониторинг: ЭКГ 12 отв. · SpO₂ · АД. IV доступ.\nОпределить: есть ли гемодинамический компромисс?" },
+        { id:2, icon:"⚠️", title:"Признаки компромисса?", text:"Любой из следующих:\n• Гипотония\n• Острое изменение сознания\n• Признаки шока\n• Ишемическая боль в груди\n• Острая сердечная недостаточность\n\nЕСТЬ → лечение немедленно!", hl:"y" },
+        { id:3, icon:"💊", title:"Атропин (1-я линия)", text:"Атропин IV болюс:\n• Первая доза: 1 мг\n• Повторять каждые 3–5 мин\n• Макс. доза: 3 мг\n\n⚠️ Атропин может быть НЕЭФФЕКТИВЕН при:\n• Блоке ниже AV-узла (полная АВ-блокада)\n• Ритме кардиостимулятора", hl:"b" },
+        { id:4, icon:"⚡", title:"При неэффективности атропина", text:"Чрескожная электрокардиостимуляция\n  И/ИЛИ\n• Допамин 5–20 мкг/кг/мин инфузия\n• Адреналин 2–10 мкг/мин инфузия\n• Консультация кардиолога → трансвенозная кардиостимуляция" },
+        { id:5, icon:"🔍", title:"Причины — лечить!", text:"• Ишемия/инфаркт (ЭКГ + тропонины)\n• Медикаменты: β-блокаторы, БКК, дигоксин, амиодарон\n• Гиперкалиемия\n• Гипоксия\n• Гипотиреоз (хроническая брадикардия)" },
+      ],
+    },
+  },
+
+  tachycardia: {
+    id: "tachycardia", title: "Тахикардия с пульсом", icon: "📈",
+    color: C.orange, severity: "urgent",
+    basic: {
+      intro: "Учащённое сердцебиение + симптомы — обратитесь за помощью.",
+      steps: [
+        { id:1, icon:"📞", title:"Позвоните 112", text:"ЧСС >150 + боль в груди, одышка, потеря сознания, нестабильность → немедленно 112.", hl:"r" },
+        { id:2, icon:"🛏️", title:"Успокойте и уложите", text:"Усадите или уложите удобно. Обеспечьте покой и свежий воздух." },
+        { id:3, icon:"💨", title:"Проба Вальсальвы", text:"При сознании и регулярном ритме:\nСильно потужьтесь 15–30 секунд (как при затруднённой дефекации).\nМожет прервать СВТ. Безопасно." },
+        { id:4, icon:"👁️", title:"Наблюдайте", text:"Следите за сознанием. Если потерял сознание + нет пульса → CPR." },
+      ],
+    },
+    medical: {
+      intro: "AHA 2025 ACLS. ЧСС ≥150/мин. Ключевой вопрос: стабильный или нестабильный?",
+      steps: [
+        { id:1, icon:"🔍", title:"Оценка + мониторинг", text:"ДП, дыхание, кровообращение. ЭКГ 12 отведений.\nSpO₂, АД, IV доступ. О₂ при гипоксии." },
+        { id:2, icon:"⚠️", title:"Гемодинамически нестабильный?", text:"Любой из следующих:\n• Гипотония\n• Острое изменение сознания\n• Признаки шока\n• Ишемическая боль в груди\n• Острая СН\n\nДА → НЕМЕДЛЕННАЯ КАРДИОВЕРСИЯ", hl:"r" },
+        { id:3, icon:"⚡", title:"Синхронизированная кардиоверсия (нестабильный)", text:"Седация если возможно (не задерживать!)\n• Фибрилляция предсердий: 200 Дж\n• Трепетание предсердий: 200 Дж\n• Узкий комплекс (регулярный): 100 Дж\n• Мономорфная ЖТ: 100 Дж\n• Полиморфная ЖТ → несинхронизированный разряд (дефибрилляция!", hl:"o" },
+        { id:4, icon:"💊", title:"Стабильный · Узкий QRS (<0.12 сек)", text:"1. Вагусные манипуляции (при регулярном ритме): проба Вальсальвы / лёд на лицо\n2. Аденозин 6 мг быстрый болюс IV → промыть NS → повторно 12 мг\n3. β-блокатор или блокатор Са²⁺-каналов\n4. Консультация кардиолога" },
+        { id:5, icon:"💊", title:"Стабильный · Широкий QRS (≥0.12 сек)", text:"• Прокаинамид 20–50 мг/мин (макс. 17 мг/кг; противопоказан при удлинённом QT, ХСН)\n• Амиодарон 150 мг за 10 мин → 1 мг/мин за 6 ч\n• Аденозин: только при регулярном мономорфном ритме (диагностика/лечение)\n\n⚠️ КОНСУЛЬТАЦИЯ ОБЯЗАТЕЛЬНА", hl:"y" },
+      ],
+    },
+  },
+};
+
+/* ═══════════════════════════════════════════════
+   ДЕРЕВО СИМПТОМОВ
+═══════════════════════════════════════════════ */
+const QTREE = {
+  q1: {
+    text: "Пациент в сознании прямо сейчас?",
+    sub: "Реагирует на обращение, открывает глаза, двигается?",
+    options: [
+      { label: "✅ Да, в сознании", next: "q2" },
+      { label: "❌ Нет, без сознания", next: "q3" },
+    ],
+  },
+  q2: {
+    text: "Признаки удушья / инородного тела?",
+    sub: "Держится за горло, не может говорить или кашлять, задыхается, синеет?",
+    options: [
+      { label: "😮‍💨 Да — подавился / задыхается", next: "FBAO" },
+      { label: "🚫 Нет", next: "q2b" },
+    ],
+  },
+  q2b: {
+    text: "Есть видимое кровотечение?",
+    sub: "Активное кровотечение из раны, требующее помощи?",
+    options: [
+      { label: "🩸 Да, сильное кровотечение", next: "BLEEDING" },
+      { label: "🚫 Нет", next: "q2c" },
+    ],
+  },
+  q2c: {
+    text: "Жалобы на сердечный ритм?",
+    sub: "Учащённое сердцебиение, медленный пульс, головокружение, одышка, боль в груди?",
+    options: [
+      { label: "📈 Быстрый пульс / сердцебиение", next: "TACHY" },
+      { label: "📉 Медленный / редкий пульс", next: "BRADY" },
+      { label: "💫 Другое / обморок / слабость", next: "SYNCOPE" },
+    ],
+  },
+  q3: {
+    text: "Есть ли пульс?",
+    sub: "Проверьте сонную артерию (2 пальца под углом нижней челюсти) или на запястье. Уверены за 10 секунд?",
+    options: [
+      { label: "✅ Да, пульс есть", next: "q4" },
+      { label: "❌ Нет пульса / не уверен", next: "CARDIAC" },
+    ],
+  },
+  q4: {
+    text: "Нормальное дыхание?",
+    sub: "Грудь поднимается равномерно? Хрипы/гаспинг = ненормальное дыхание.",
+    options: [
+      { label: "✅ Да, нормальное", next: "SYNCOPE" },
+      { label: "❌ Нет / только хрипы / гаспинг", next: "CARDIAC" },
+    ],
+  },
+};
+
+function getDiagnosis(code, patientType) {
+  const map = {
+    CARDIAC: patientType === "child" ? "cardiac_arrest_pediatric"
+            : patientType === "pregnant" ? "cardiac_arrest_pregnancy"
+            : "cardiac_arrest",
+    FBAO: patientType === "child" ? "fbao_child" : "fbao_adult",
+    BLEEDING: "bleeding",
+    SYNCOPE: "syncope",
+    TACHY: "tachycardia",
+    BRADY: "bradycardia",
+  };
+  return map[code] || "syncope";
+}
+
+/* ═══════════════════════════════════════════════
+   КОМПОНЕНТ ТАЙМЕР
+═══════════════════════════════════════════════ */
+function Timer({ seconds, label }) {
+  const [left, setLeft] = useState(seconds);
+  const [run, setRun] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (run && left > 0) { ref.current = setInterval(() => setLeft(l => l - 1), 1000); }
+    else { clearInterval(ref.current); if (left === 0) setRun(false); }
+    return () => clearInterval(ref.current);
+  }, [run, left]);
+
+  const toggle = () => { if (left === 0) setLeft(seconds); setRun(r => !r); };
+  const m = Math.floor(left / 60), s = left % 60;
+  const done = left === 0;
+
+  return (
+    <div className="tmr">
+      <div>
+        <div className="tmrd" style={{ color: done ? C.red : run ? C.green : C.text }}>
+          {`${m}:${s.toString().padStart(2,"0")}`}
+        </div>
+        <div className="tmrl">{done ? "✓ Время вышло!" : label || "Таймер"}</div>
+      </div>
+      <button className={`tmrb${run ? " run" : ""}`} onClick={toggle}>
+        {done ? "↺" : run ? "⏸ Стоп" : "▶ Старт"}
+      </button>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   ГЛАВНОЕ ПРИЛОЖЕНИЕ
+═══════════════════════════════════════════════ */
+function App() {
+  const [s, set] = useState({
+    screen: "welcome",
+    patientType: null,
+    trainingLevel: null,
+    qKey: "q1",
+    protocolId: null,
+    rhythmType: null,
+    isOnline: navigator.onLine,
+  });
+  const upd = (o) => set(prev => ({ ...prev, ...o }));
+  const go = (screen, extra = {}) => upd({ screen, ...extra });
+
+  useEffect(() => {
+    const on = () => upd({ isOnline: true });
+    const off = () => upd({ isOnline: false });
+    window.addEventListener("online", on);
+    window.addEventListener("offline", off);
+    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
+  }, []);
+
+  const proto = s.protocolId ? P[s.protocolId] : null;
+
+  const getSteps = () => {
+    if (!proto) return [];
+    const isMed = s.trainingLevel === "medical";
+    if (isMed && proto.medical) {
+      const m = proto.medical;
+      if (m.shockable) {
+        if (!s.rhythmType) return null;
+        return s.rhythmType === "shockable" ? m.shockable : m.nonShockable;
+      }
+      return m.steps || [];
+    }
+    return proto.basic?.steps || [];
+  };
+
+  const needsRhythm = () =>
+    s.trainingLevel === "medical" && proto &&
+    proto.medical?.shockable && !s.rhythmType;
+
+  const isCardiacArr = () =>
+    proto && ["cardiac_arrest","cardiac_arrest_pediatric","cardiac_arrest_pregnancy"].includes(proto.id);
+
+  const hlClass = { r:"hr", y:"hy", g:"hg", b:"hg", o:"ho" };
+
+  /* ─── ЭКРАНЫ ─── */
+
+  if (s.screen === "welcome") return (
+    <>
+      <style>{CSS}</style>
+      <div className="screen" style={{ animation:"fadeIn .4s ease" }}>
+        <div style={{ padding:"16px 16px 0", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+          <span style={{ fontSize:11, color:C.textSec }}>v1.0 · AHA 2025</span>
+          <span style={{ fontSize:11, color:s.isOnline ? C.green : C.red }}>
+            {s.isOnline ? "🟢 Онлайн" : "🔴 Офлайн"}
+          </span>
+        </div>
+        <div className="body" style={{ textAlign:"center" }}>
+          <div style={{ fontSize:72, margin:"32px 0 16px" }}>🚨</div>
+          <div style={{ fontSize:26, fontWeight:900, lineHeight:1.2, marginBottom:12 }}>
+            Экстренная<br/>первая помощь
+          </div>
+          <div style={{ fontSize:14, color:C.textSec, lineHeight:1.65, marginBottom:28 }}>
+            Пошаговые инструкции по алгоритмам<br/><strong style={{color:C.text}}>AHA 2025</strong> для любого уровня подготовки
+          </div>
+          <a href="tel:112" className="btn btn-red pulse" style={{ marginBottom:12, fontSize:18 }}>
+            📞 Экстренный вызов 112
+          </a>
+          <div className="banner" style={{ textAlign:"left", marginTop:8 }}>
+            <span style={{ fontSize:20, flexShrink:0 }}>ℹ️</span>
+            <div style={{ fontSize:13, color:C.textSec, lineHeight:1.5 }}>
+              Приложение — <strong style={{color:C.text}}>дополнение</strong> к вызову скорой, а не его замена.
+              При угрозе жизни сначала звоните <strong style={{color:C.text}}>112</strong>.
+            </div>
+          </div>
+        </div>
+        <div className="footer">
+          <button className="btn btn-sec" onClick={() => go("patient")}>
+            Начать оценку состояния →
+          </button>
+        </div>
+      </div>
+    </>
+  );
+
+  if (s.screen === "patient") {
+    const opts = [
+      { v:"adult", ico:"🧑", l:"Взрослый", sub:"Старше 18 лет или есть признаки пубертата" },
+      { v:"child", ico:"🧒", l:"Ребёнок", sub:"От рождения до ~12 лет / до пубертата" },
+      { v:"pregnant", ico:"🤰", l:"Беременная", sub:"Заметный живот / возможная беременность" },
+      { v:"elderly", ico:"👴", l:"Пожилой человек", sub:"Старше ~65 лет / особые соображения" },
+    ];
+    return (
+      <>
+        <style>{CSS}</style>
+        <div className="screen animate-fade">
+          <div className="hdr">
+            <button className="back" onClick={() => go("welcome")}>←</button>
+            <div><div className="hdr-t">Тип пациента</div><div className="hdr-s">Шаг 1 из 3</div></div>
+            <a href="tel:112" className="e112">📞 112</a>
+          </div>
+          <div className="pb"><div className="pf" style={{ width:"33%" }}></div></div>
+          <div className="body">
+            <div style={{ fontWeight:800, fontSize:19, marginBottom:6 }}>Кто пострадавший?</div>
+            <div style={{ fontSize:13, color:C.textSec, marginBottom:14 }}>Тип пациента определяет алгоритм помощи</div>
+            <div className="opts">
+              {opts.map(o => (
+                <button key={o.v} className={`opt${s.patientType===o.v?" sel":""}`} onClick={() => upd({ patientType: o.v })}>
+                  <div className="opt-ico">{o.ico}</div>
+                  <div><div className="opt-lbl">{o.l}</div><div className="opt-sub">{o.sub}</div></div>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="footer">
+            <button className="btn btn-red" onClick={() => go("training")} disabled={!s.patientType}>Продолжить →</button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (s.screen === "training") {
+    const opts = [
+      { v:"basic", ico:"🙋", l:"Нет медицинского образования", sub:"Упрощённые инструкции, доступные каждому" },
+      { v:"medical", ico:"👨‍⚕️", l:"Есть медицинское образование", sub:"Полные ACLS/PALS/BLS алгоритмы с дозировками" },
+    ];
+    return (
+      <>
+        <style>{CSS}</style>
+        <div className="screen animate-fade">
+          <div className="hdr">
+            <button className="back" onClick={() => go("patient")}>←</button>
+            <div><div className="hdr-t">Ваша подготовка</div><div className="hdr-s">Шаг 2 из 3</div></div>
+            <a href="tel:112" className="e112">📞 112</a>
+          </div>
+          <div className="pb"><div className="pf" style={{ width:"66%" }}></div></div>
+          <div className="body">
+            <div style={{ fontWeight:800, fontSize:19, marginBottom:6 }}>Уровень подготовки</div>
+            <div style={{ fontSize:13, color:C.textSec, marginBottom:14 }}>Укажите ваш уровень — получите соответствующие рекомендации</div>
+            <div className="opts">
+              {opts.map(o => (
+                <button key={o.v} className={`opt${s.trainingLevel===o.v?" sel":""}`} onClick={() => upd({ trainingLevel: o.v })}>
+                  <div className="opt-ico">{o.ico}</div>
+                  <div><div className="opt-lbl">{o.l}</div><div className="opt-sub">{o.sub}</div></div>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="footer">
+            <button className="btn btn-red" onClick={() => go("symptoms", { qKey:"q1" })} disabled={!s.trainingLevel}>Продолжить →</button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (s.screen === "symptoms") {
+    const q = QTREE[s.qKey];
+    if (!q) return null;
+    const handleAns = (next) => {
+      if (!QTREE[next]) {
+        const pid = getDiagnosis(next, s.patientType);
+        go("diagnosis", { protocolId: pid, rhythmType: null });
+      } else {
+        upd({ qKey: next });
+      }
+    };
+    return (
+      <>
+        <style>{CSS}</style>
+        <div className="screen animate-fade">
+          <div className="hdr">
+            <button className="back" onClick={() => go("training")}>←</button>
+            <div><div className="hdr-t">Оценка состояния</div><div className="hdr-s">Шаг 3 из 3</div></div>
+            <a href="tel:112" className="e112">📞 112</a>
+          </div>
+          <div className="pb"><div className="pf" style={{ width:"92%" }}></div></div>
+          <div className="body">
+            <div style={{ fontWeight:800, fontSize:20, marginBottom:8, lineHeight:1.3 }}>{q.text}</div>
+            {q.sub && <div style={{ fontSize:14, color:C.textSec, marginBottom:20, lineHeight:1.6 }}>{q.sub}</div>}
+            <div className="opts">
+              {q.options.map((o,i) => (
+                <button key={i} className="opt" style={{ border:`2px solid ${C.border}` }} onClick={() => handleAns(o.next)}>
+                  <div style={{ fontSize:15, fontWeight:700, color:C.text }}>{o.label}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (s.screen === "diagnosis") {
+    if (!proto) return null;
+    const sevColor = { critical:C.red, urgent:C.orange, moderate:C.blue };
+    const sevLabel = { critical:"🔴 КРИТИЧЕСКИ ВАЖНО", urgent:"🟠 СРОЧНО", moderate:"🟡 НУЖНА ПОМОЩЬ" };
+    const col = sevColor[proto.severity] || C.blue;
+    const isMedCA = s.trainingLevel==="medical" && isCardiacArr();
+    return (
+      <>
+        <style>{CSS}</style>
+        <div className="screen animate-fade">
+          <div className="hdr">
+            <button className="back" onClick={() => go("symptoms", { qKey:"q1", protocolId:null, rhythmType:null })}>←</button>
+            <div className="hdr-t">Предварительная оценка</div>
+            <a href="tel:112" className="e112">📞 112</a>
+          </div>
+          <div className="body">
+            <div className="dcard" style={{ background:col+"22", border:`2px solid ${col}40` }}>
+              <div className="dico">{proto.icon}</div>
+              <div className="dtit">{proto.title}</div>
+              <div className="dsub">
+                {s.patientType==="child"?"👶 Ребёнок":s.patientType==="pregnant"?"🤰 Беременная":s.patientType==="elderly"?"👴 Пожилой":"🧑 Взрослый"}
+                {" · "}
+                {s.trainingLevel==="medical"?"👨‍⚕️ Медперсонал":"🙋 Первая помощь"}
+              </div>
+              <div className="dbadge" style={{ background:col+"40", color:col }}>{sevLabel[proto.severity]}</div>
+            </div>
+
+            {isCardiacArr() && (
+              <div style={{ background:C.red+"20", border:`1px solid ${C.red}40`, borderRadius:12, padding:14, marginBottom:16 }}>
+                <div style={{ fontWeight:800, color:C.red, marginBottom:4 }}>⚠️ НЕМЕДЛЕННО ВЫЗОВИТЕ 112</div>
+                <div style={{ fontSize:13, color:C.textSec }}>Продолжайте помощь пока едет скорая</div>
+              </div>
+            )}
+
+            {isMedCA && (
+              <>
+                <div className="sec-t">Ритм на мониторе?</div>
+                <div className="rsel">
+                  <button className={`rbtn${s.rhythmType==="shockable"?" sel":""}`} onClick={() => upd({ rhythmType:"shockable" })}>
+                    <div className="rbico">⚡</div>
+                    <div className="rblbl">VF / pVT</div>
+                    <div className="rbsub">Шоковый ритм</div>
+                  </button>
+                  <button className={`rbtn${s.rhythmType==="nonShockable"?" sel":""}`} onClick={() => upd({ rhythmType:"nonShockable" })}>
+                    <div className="rbico">📉</div>
+                    <div className="rblbl">Асистолия / PEA</div>
+                    <div className="rbsub">Нешоковый ритм</div>
+                  </button>
+                </div>
+              </>
+            )}
+
+            <div style={{ fontSize:13, color:C.textSec, lineHeight:1.5 }}>
+              <strong style={{color:C.text}}>Источник: </strong>
+              {s.trainingLevel==="medical" ? "Алгоритмы AHA 2025 (ACLS/PALS)" : "Алгоритмы AHA 2025 (BLS)"}
+            </div>
+          </div>
+          <div className="footer">
+            <button className="btn btn-red" style={{ marginBottom:8, opacity:needsRhythm()?0.35:1 }}
+              disabled={needsRhythm()} onClick={() => go("steps")}>
+              Пошаговые инструкции →
+            </button>
+            {s.isOnline && (
+              <button className="btn btn-blu" onClick={() => go("specialist")}>
+                📹 Вызвать специалиста онлайн
+              </button>
+            )}
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (s.screen === "steps") {
+    if (!proto) return null;
+    const isMed = s.trainingLevel === "medical";
+    const mode = isMed ? proto.medical : proto.basic;
+    const steps = getSteps();
+    if (!steps) return null;
+    return (
+      <>
+        <style>{CSS}</style>
+        <div className="screen animate-fade">
+          <div className="hdr">
+            <button className="back" onClick={() => go("diagnosis")}>←</button>
+            <div>
+              <div className="hdr-t">{proto.title}</div>
+              <div className="hdr-s">{isMed ? "ACLS/PALS" : "BLS"} · AHA 2025</div>
+            </div>
+            <a href="tel:112" className="e112">📞 112</a>
+          </div>
+          <div className="body">
+            {mode?.intro && (
+              <div style={{ background:proto.color+"20", border:`1px solid ${proto.color}40`, borderRadius:12, padding:14, marginBottom:18, fontSize:13.5, lineHeight:1.55, color:C.textSec }}>
+                <strong style={{color:proto.color}}>{proto.icon} {isMed && s.rhythmType ? (s.rhythmType==="shockable"?"⚡ VF/pVT · ":"📉 Асистолия/PEA · ") : ""}{proto.title}</strong><br/>
+                {mode.intro}
+              </div>
+            )}
+
+            {steps.map((step, i) => (
+              <div key={step.id} className={`step${step.hl?" "+hlClass[step.hl]:""}`}>
+                <div style={{ display:"flex", alignItems:"flex-start", gap:12 }}>
+                  <div className="snum" style={{ background:step.hl?(step.hl==="r"?C.red:step.hl==="y"?C.yellow:step.hl==="g"?C.green:step.hl==="o"?C.orange:C.blue):C.blue, color:step.hl==="y"?"#000":"#fff" }}>
+                    {i+1}
+                  </div>
+                  <div style={{ flex:1 }}>
+                    <div className="stit">{step.icon && <span style={{marginRight:6}}>{step.icon}</span>}{step.title}</div>
+                    <div className="stxt">{step.text}</div>
+                    {step.timer && <Timer seconds={step.timer} label={step.timerLabel} />}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <div style={{ background:C.card, borderRadius:14, padding:18, marginTop:8, textAlign:"center", border:`1px solid ${C.border}` }}>
+              <div style={{ fontSize:26, marginBottom:8 }}>✅</div>
+              <div style={{ fontWeight:800, marginBottom:4 }}>Продолжайте до прибытия скорой</div>
+              <div style={{ fontSize:12, color:C.textSec }}>© American Heart Association 2025</div>
+            </div>
+            <div style={{ height:16 }} />
+          </div>
+          <div className="footer">
+            <a href="tel:112" className="btn btn-red" style={{ marginBottom:8 }}>📞 Звонок 112</a>
+            {s.isOnline && (
+              <button className="btn btn-blu" onClick={() => go("specialist")}>📹 Консультация специалиста</button>
+            )}
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (s.screen === "specialist") return (
+    <>
+      <style>{CSS}</style>
+      <div className="screen animate-fade">
+        <div className="hdr">
+          <button className="back" onClick={() => go(s.protocolId?"steps":"diagnosis")}>←</button>
+          <div className="hdr-t">Консультация онлайн</div>
+          <a href="tel:112" className="e112">📞 112</a>
+        </div>
+        <div className="body">
+          {!s.isOnline ? (
+            <div style={{ textAlign:"center", padding:"40px 0" }}>
+              <div style={{ fontSize:54, marginBottom:16 }}>📴</div>
+              <div style={{ fontWeight:800, fontSize:18, marginBottom:8 }}>Нет подключения</div>
+              <div style={{ color:C.textSec, fontSize:14, lineHeight:1.6 }}>
+                Используйте пошаговые инструкции из алгоритма или позвоните 112.
+              </div>
+            </div>
+          ) : (
+            <>
+              <div style={{ background:C.card, borderRadius:16, padding:22, marginBottom:12, border:`1px solid ${C.border}`, textAlign:"center" }}>
+                <div style={{ fontSize:48, marginBottom:12 }}>👨‍⚕️</div>
+                <div style={{ fontWeight:800, fontSize:18, marginBottom:8 }}>Видеоконсультация</div>
+                <div style={{ fontSize:13, color:C.textSec, marginBottom:16 }}>
+                  Специалист подключится и поможет вам в режиме реального времени
+                </div>
+                <a href={CFG.specialistVideoUrl} target="_blank" rel="noopener noreferrer"
+                  className="btn btn-grn" style={{ textDecoration:"none" }}>
+                  📹 Начать видеоконсультацию
+                </a>
+              </div>
+
+              <div style={{ background:C.card, borderRadius:16, padding:22, marginBottom:12, border:`1px solid ${C.border}`, textAlign:"center" }}>
+                <div style={{ fontSize:36, marginBottom:10 }}>💬</div>
+                <div style={{ fontWeight:800, fontSize:16, marginBottom:8 }}>WhatsApp / Telegram</div>
+                <div style={{ fontSize:13, color:C.textSec, marginBottom:14 }}>Напишите или позвоните специалисту напрямую</div>
+                <a href={`https://wa.me/${CFG.specialistPhone.replace(/\D/g,"")}`} target="_blank" rel="noopener noreferrer"
+                  className="btn btn-sec" style={{ textDecoration:"none", marginBottom:8 }}>
+                  💬 WhatsApp
+                </a>
+                <a href={`https://t.me/+${CFG.specialistPhone.replace(/\D/g,"")}`} target="_blank" rel="noopener noreferrer"
+                  className="btn btn-sec" style={{ textDecoration:"none" }}>
+                  ✈️ Telegram
+                </a>
+              </div>
+
+              <div style={{ padding:14, background:C.yellowBg, border:`1px solid ${C.yellow}40`, borderRadius:12, fontSize:13, color:C.textSec }}>
+                <strong style={{color:C.yellow}}>⚠️ Помните:</strong> Онлайн-консультация не заменяет звонок 112.
+                При угрозе жизни — всегда вызывайте скорую.
+              </div>
+            </>
+          )}
+        </div>
+        <div className="footer">
+          <a href="tel:112" className="btn btn-red">📞 Звонок 112 — экстренно</a>
+        </div>
+      </div>
+    </>
+  );
+
+  return null;
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>

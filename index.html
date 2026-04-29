@@ -1179,6 +1179,312 @@ const P = {
         hl: "y"
       }]
     }
+  },
+
+  /* ── АНАФИЛАКСИЯ ── */
+  anaphylaxis: {
+    id: "anaphylaxis",
+    title: "Анафилаксия",
+    icon: "🤧",
+    color: C.orange,
+    severity: "critical",
+    basic: {
+      intro: "Тяжёлая аллергическая реакция. Адреналин — первый и главный препарат!",
+      steps: [{
+        id: 1,
+        icon: "📞",
+        title: "Немедленно 112",
+        text: "Скажите: «Анафилаксия» или «Тяжёлая аллергия».\nНе ждите — реакция нарастает быстро.",
+        hl: "r"
+      }, {
+        id: 2,
+        icon: "💉",
+        title: "Адреналин-авто-инжектор (EpiPen)",
+        text: "Если есть EpiPen/Auvi-Q:\n→ Вколоть в наружную поверхность бедра\n→ Держать 10 секунд\n→ Можно прямо через одежду!\n\nЕсли нет авто-инжектора → ждите скорую, сообщите 112.",
+        hl: "r"
+      }, {
+        id: 3,
+        icon: "🛏️",
+        title: "Положение пациента",
+        text: "Одышка → сидя или полусидя\nБез сознания / низкое АД → на спину, ноги приподнять\nБеременная → на левый бок\n\nНЕ позволяйте стоять или ходить!",
+        hl: "y"
+      }, {
+        id: 4,
+        icon: "👁️",
+        title: "Наблюдайте 15 минут",
+        text: "Симптомы могут вернуться через 15–30 мин (бифазная реакция).\nНЕ отпускайте пациента домой до приезда медиков.",
+        timer: 900,
+        timerLabel: "15 мин наблюдения"
+      }, {
+        id: 5,
+        icon: "🚫",
+        title: "НЕ делайте",
+        text: "• НЕ давайте есть или пить\n• НЕ позволяйте ходить\n• НЕ оставляйте одного\n• Антигистамин — НЕ замена адреналину"
+      }]
+    },
+    medical: {
+      intro: "AHA 2025 / EAACI. Адреналин IM — первый и единственный препарат 1-й линии. Антигистамины и ГКС — вспомогательные.",
+      steps: [{
+        id: 1,
+        icon: "💉",
+        title: "Адреналин IM — немедленно!",
+        text: "Адреналин 1:1000 → 0.01 мг/кг IM в латеральную поверхность бедра.\nМакс: взрослые 0.5 мг · дети 0.3 мг\nПовторить через 5–15 мин при недостаточном эффекте.",
+        hl: "r"
+      }, {
+        id: 2,
+        icon: "🛏️",
+        title: "Положение + О₂",
+        text: "Одышка → сидя\nГипотония/обморок → горизонтально + ноги вверх\nО₂ 8–10 л/мин через маску\nIV доступ."
+      }, {
+        id: 3,
+        icon: "💊",
+        title: "2-я линия (не вместо адреналина!)",
+        text: "Антигистамин: Дифенгидрамин 25–50 мг IV/IM\nГКС: Метилпреднизолон 1–2 мг/кг (макс. 125 мг) IV\n\n⚠️ Только после адреналина, не вместо него!",
+        hl: "y"
+      }, {
+        id: 4,
+        icon: "💧",
+        title: "При гипотонии / шоке",
+        text: "Физ. р-р 1–2 л болюс (взрослые) / 20 мл/кг (дети)\nПри рефрактерной гипотонии:\nАдреналин инфузия 0.1–0.3 мкг/кг/мин IV",
+        hl: "r"
+      }, {
+        id: 5,
+        icon: "⏱️",
+        title: "Наблюдение + выписка",
+        text: "Мин. 4–6 ч в ЛПУ (при тяжёлой реакции — до 24 ч).\nПри выписке: антигистамин + ГКС курс 3 дня.\nНаправление к аллергологу. EpiPen с собой!",
+        timer: 900,
+        timerLabel: "15 мин мин. наблюдение"
+      }]
+    }
+  },
+
+  /* ── ИНСУЛЬТ ── */
+  stroke: {
+    id: "stroke",
+    title: "Инсульт (FAST)",
+    icon: "🧠",
+    color: C.red,
+    severity: "critical",
+    basic: {
+      intro: "Время = мозг! Каждая минута без лечения = 1.9 млн погибших нейронов. Тромболизис возможен только в первые 4.5 часа.",
+      steps: [{
+        id: 1,
+        icon: "🔍",
+        title: "Тест FAST — проверьте прямо сейчас",
+        text: "F — Лицо: улыбнитесь → один угол рта опускается?\nA — Руки: поднимите обе → одна опускается/слабее?\nS — Речь: повторите фразу → неразборчиво / странно?\nT — Время: даже 1 «да» → НЕМЕДЛЕННО 112!",
+        hl: "y"
+      }, {
+        id: 2,
+        icon: "📞",
+        title: "Звоните 112 — скажите «инсульт»!",
+        text: "Скажите: «Подозрение на инсульт».\nНАЗОВИТЕ точное время появления симптомов — это критично для лечения!\nЕсли проснулся с симптомами → время укладки спать.",
+        hl: "r"
+      }, {
+        id: 3,
+        icon: "🛏️",
+        title: "Положение до скорой",
+        text: "Сознание есть → голова и плечи приподняты 30°\nБез сознания → устойчивое боковое положение\n\nНЕ давайте воду, еду, таблетки — нарушено глотание!"
+      }, {
+        id: 4,
+        icon: "⏱️",
+        title: "Фиксируйте время",
+        text: "Запишите точное время первых симптомов.\nЭта информация определяет, возможен ли тромболизис.\nФото часов / скриншот телефона — хорошая идея."
+      }, {
+        id: 5,
+        icon: "🚫",
+        title: "НЕ делайте",
+        text: "• НЕ давайте аспирин без подтверждения ишемии\n• НЕ давайте воду (риск аспирации!)\n• НЕ оставляйте одного\n• НЕ давайте засыпать до скорой"
+      }]
+    },
+    medical: {
+      intro: "AHA/ASA 2023. Тромболизис ≤4.5 ч, тромбэктомия ≤24 ч. Цель «дверь-игла» ≤60 мин.",
+      steps: [{
+        id: 1,
+        icon: "⏱️",
+        title: "Активировать инсультную команду",
+        text: "Время «дверь-КТ» ≤25 мин. «Дверь-игла» ≤60 мин.\nКТ без контраста НЕМЕДЛЕННО — исключить геморрагию!\nНИГДЕ не откладывать: глюкоза, ЭКГ, коагулограмма параллельно КТ.",
+        hl: "r"
+      }, {
+        id: 2,
+        icon: "🔍",
+        title: "NIH Stroke Scale + КТ/КТ-АГ",
+        text: "Оценить NIH SS.\nКТ без конт. → геморрагия?\nКТ-ангиография → окклюзия крупного сосуда (тромбэктомия!).\nГлюкоза: гипогликемия = имитатор инсульта!",
+        hl: "y"
+      }, {
+        id: 3,
+        icon: "💊",
+        title: "Тромболизис (ишемический, ≤4.5 ч)",
+        text: "Алтеплаза 0.9 мг/кг IV (макс. 90 мг):\n• 10% дозы — болюс за 1 мин\n• 90% — инфузия за 60 мин\n\n⚠️ Противопоказания: АД >185/110, геморрагия, антикоагулянты (зависит от препарата).",
+        hl: "b"
+      }, {
+        id: 4,
+        icon: "🩺",
+        title: "АД-менеджмент",
+        text: "Ишемический (без тромболизиса): не снижать при <220/120\nПеред тромболизисом: цель <185/110\n→ Лабеталол 10–20 мг IV или Никардипин 5 мг/ч\nГеморрагический инсульт: цель <140 мм рт.ст."
+      }, {
+        id: 5,
+        icon: "🏥",
+        title: "Тромбэктомия / перевод",
+        text: "Окклюзия крупного сосуда → механическая тромбэктомия ≤24 ч.\nПеревод в инсультный центр ASAP.\nАспирин 325 мг через 24 ч после тромболизиса."
+      }]
+    }
+  },
+
+  /* ── СУДОРОГИ ── */
+  seizures: {
+    id: "seizures",
+    title: "Судороги / эпилептический приступ",
+    icon: "⚡",
+    color: C.yellow,
+    severity: "urgent",
+    basic: {
+      intro: "Большинство приступов заканчиваются сами за 1–3 мин. Ваша задача — безопасность пациента, не остановка судорог.",
+      steps: [{
+        id: 1,
+        icon: "🛡️",
+        title: "Защита от травм",
+        text: "Уберите острые, твёрдые предметы вокруг.\nПодложите что-то мягкое под голову.\nОТОДВИНЬТЕ от опасности — НЕ удерживайте силой!",
+        hl: "y"
+      }, {
+        id: 2,
+        icon: "⏱️",
+        title: "Засеките время — это важно!",
+        text: "Приступ >5 минут = судорожный статус → НЕМЕДЛЕННО 112!\nЗапишите время начала.",
+        timer: 300,
+        timerLabel: "5 мин → вызов 112",
+        hl: "b"
+      }, {
+        id: 3,
+        icon: "🚫",
+        title: "НЕ делайте — это опасно!",
+        text: "• НЕ вставляйте ничего в рот — НИКОГДА!\n  (ложка, пальцы → сломанные зубы, травма)\n• НЕ удерживайте язык — это миф\n• НЕ давайте воду/лекарства во время приступа\n• НЕ оставляйте одного",
+        hl: "r"
+      }, {
+        id: 4,
+        icon: "🔄",
+        title: "После приступа",
+        text: "Осторожно поверните на бок (восстановительное положение).\nПациент будет спутан 5–30 мин — это нормальная постиктальная фаза.\nОставайтесь рядом, говорите спокойно."
+      }, {
+        id: 5,
+        icon: "📞",
+        title: "Когда звонить 112?",
+        text: "• Приступ >5 минут\n• Несколько приступов подряд без прихода в себя\n• Первый приступ в жизни\n• Травма во время приступа\n• Затруднённое дыхание после\n• Беременность",
+        hl: "b"
+      }]
+    },
+    medical: {
+      intro: "Судорожный статус: >5 мин непрерывно ИЛИ ≥2 приступа без восстановления сознания. Лечить агрессивно.",
+      steps: [{
+        id: 1,
+        icon: "⏱️",
+        title: "Оценка + ABC",
+        text: "Время начала? Известная эпилепсия?\nАВС, пульсоксиметрия, О₂.\nГлюкоза крови НЕМЕДЛЕННО.\nIV/IO доступ."
+      }, {
+        id: 2,
+        icon: "💊",
+        title: "1-я линия: Бензодиазепины (0–5 мин)",
+        text: "Лоразепам IV: 0.05–0.1 мг/кг (макс. 4 мг)\n  ИЛИ\nМидазолам IM/IN: 0.1–0.2 мг/кг (макс. 10 мг)\n  ИЛИ\nДиазепам ректально: 0.2–0.5 мг/кг\n\nМожно повторить однократно через 5 мин.",
+        hl: "b"
+      }, {
+        id: 3,
+        icon: "💊",
+        title: "2-я линия: при продолжении (5–20 мин)",
+        text: "Вальпроат натрия IV: 40 мг/кг за 10 мин (макс. 3000 мг)\n  ИЛИ\nЛевитирацетам IV: 60 мг/кг за 15 мин (макс. 4500 мг)\n  ИЛИ\nФосфенитоин IV: 20 мг ФЭ/кг (макс. 1500 мг ФЭ)",
+        hl: "y"
+      }, {
+        id: 4,
+        icon: "🏥",
+        title: "3-я линия: рефрактерный статус (>20 мин)",
+        text: "Пропофол / тиопентал / мидазолам → общая анестезия.\nИВЛ + ЭЭГ-мониторинг.\nПеревод в ОРИТ.",
+        hl: "r"
+      }, {
+        id: 5,
+        icon: "🔍",
+        title: "Причины — найти и лечить!",
+        text: "Гипогликемия → Глюкоза 40% 20–40 мл IV\nГипонатриемия → NaCl 3% 2 мл/кг\nМенингит (подозрение) → антибиотики ДО КТ!\nТравма, токсины, гипоксия, эклампсия"
+      }]
+    }
+  },
+
+  /* ── УТОПЛЕНИЕ ── */
+  drowning: {
+    id: "drowning",
+    title: "Утопление",
+    icon: "🌊",
+    color: C.blue,
+    severity: "critical",
+    basic: {
+      intro: "Утопление — прежде всего дыхательная остановка. CPR начинают с ВДОХОВ, а не с компрессий — это отличие от стандарта!",
+      steps: [{
+        id: 1,
+        icon: "🛡️",
+        title: "Безопасность спасателя — прежде всего!",
+        text: "НЕ прыгайте в воду без страховки.\nТонущий в панике может утопить вас.\nБросьте верёвку, спасательный круг, доску, одежду.",
+        hl: "r"
+      }, {
+        id: 2,
+        icon: "📞",
+        title: "Звоните 112",
+        text: "Сообщите об утоплении.\nУкажите: пресная или солёная вода, примерное время в воде, температура воды.",
+        hl: "r"
+      }, {
+        id: 3,
+        icon: "💨",
+        title: "СНАЧАЛА — 5 спасательных вдохов!",
+        text: "НЕ как обычный CPR — начинайте с ВДОХОВ!\nЗапрокиньте голову, поднимите подбородок.\nДайте 5 вдохов (1 сек каждый) — грудь должна подниматься.",
+        hl: "r"
+      }, {
+        id: 4,
+        icon: "🤲",
+        title: "CPR 30:2",
+        text: "После 5 вдохов → 30 компрессий + 2 вдоха.\n100–120/мин, глубина ≥5 см.\nПродолжайте до приезда скорой.",
+        timer: 120,
+        timerLabel: "2 мин CPR",
+        cpr: true
+      }, {
+        id: 5,
+        icon: "🌡️",
+        title: "Гипотермия — не прекращайте CPR!",
+        text: "Снимите мокрую одежду, укройте.\nДаже при ледяной воде продолжайте CPR.\n\nПравило: «Никто не мёртв, пока не тёпл и мёртв».\nРеанимация до согревания тела!",
+        hl: "b"
+      }]
+    },
+    medical: {
+      intro: "AHA 2023. Утопление = асфиксия + гипоксия. Оксигенация — абсолютный приоритет. 5 вдохов до компрессий.",
+      steps: [{
+        id: 1,
+        icon: "💨",
+        title: "5 вдохов — ДО компрессий!",
+        text: "Рот-рот или маска-мешок + О₂.\nПопытки 5 (даже если 2–3 успешны).\n\n⚠️ НЕ тратить время на дренаж воды из лёгких — это неэффективно и опасно.",
+        hl: "r"
+      }, {
+        id: 2,
+        icon: "🫁",
+        title: "Оксигенация — высший приоритет",
+        text: "О₂ 100%. Ранняя интубация при отсутствии сознания.\nВентиляция с ПДКВ при развитии отёка лёгких.\nПульсоксиметрия может не работать при гипотермии.",
+        hl: "o"
+      }, {
+        id: 3,
+        icon: "🤲",
+        title: "CPR + ACLS",
+        text: "1 спасатель: 30:2 / 2 спасателя: 15:2\nAED — применять при VF/pVT.\n\nПриоритет оксигенации — при возможности оксигенировать до дефибрилляции.",
+        timer: 120,
+        timerLabel: "2 мин CPR",
+        cpr: true
+      }, {
+        id: 4,
+        icon: "🌡️",
+        title: "Гипотермия и дефибрилляция",
+        text: "T° <30°C: до 3 разрядов, затем отложить до согревания.\nT° 30–35°C: стандартный ACLS, интервалы удвоены.\nАктивное согревание: одеяла, тёплые инфузии, форсированный воздух.",
+        hl: "y"
+      }, {
+        id: 5,
+        icon: "💊",
+        title: "Осложнения",
+        text: "Отёк лёгких → ПДКВ ≥5 см H₂O, диуретики с осторожностью\nМетаболический ацидоз → стандартная коррекция\nВторичное утопление: наблюдение 6–24 ч даже при нормальном состоянии!",
+        hl: "b"
+      }]
+    }
   }
 };
 const QTREE = {
@@ -1188,6 +1494,9 @@ const QTREE = {
     options: [{
       label: "✅ Да, в сознании",
       next: "q2"
+    }, {
+      label: "⚡ Судороги / трясётся",
+      next: "SEIZURES"
     }, {
       label: "❌ Нет, без сознания",
       next: "q3"
@@ -1216,6 +1525,28 @@ const QTREE = {
     }]
   },
   q2c: {
+    text: "Тяжёлая аллергическая реакция?",
+    sub: "Отёк лица/горла, крапивница, затруднение дыхания после контакта с аллергеном (еда, укус, лекарство)?",
+    options: [{
+      label: "🤧 Да — аллергия / анафилаксия",
+      next: "ANAPHYLAXIS"
+    }, {
+      label: "🚫 Нет",
+      next: "q2d"
+    }]
+  },
+  q2d: {
+    text: "Симптомы инсульта (FAST)?",
+    sub: "Перекошено лицо? Слабость в руке? Нарушение речи? Внезапная сильная головная боль?",
+    options: [{
+      label: "🧠 Да — подозрение на инсульт",
+      next: "STROKE"
+    }, {
+      label: "🚫 Нет",
+      next: "q2e"
+    }]
+  },
+  q2e: {
     text: "Жалобы на сердечный ритм?",
     sub: "Учащённое сердцебиение, медленный пульс, головокружение, одышка, боль в груди?",
     options: [{
@@ -1250,6 +1581,17 @@ const QTREE = {
       label: "❌ Нет / только хрипы / гаспинг",
       next: "CARDIAC"
     }]
+  },
+  q5: {
+    text: "Это случилось в воде / при утоплении?",
+    sub: "Пациент был извлечён из воды, озера, бассейна или реки?",
+    options: [{
+      label: "🌊 Да — утопление",
+      next: "DROWNING"
+    }, {
+      label: "🚫 Нет",
+      next: "CARDIAC"
+    }]
   }
 };
 function getDiagnosis(code, patientType) {
@@ -1259,7 +1601,11 @@ function getDiagnosis(code, patientType) {
     BLEEDING: "bleeding",
     SYNCOPE: "syncope",
     TACHY: "tachycardia",
-    BRADY: "bradycardia"
+    BRADY: "bradycardia",
+    ANAPHYLAXIS: "anaphylaxis",
+    STROKE: "stroke",
+    SEIZURES: "seizures",
+    DROWNING: "drowning"
   };
   return map[code] || "syncope";
 }
@@ -1290,21 +1636,28 @@ function useMetronome() {
       gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
       osc.start(time);
       osc.stop(time + 0.1);
-      if (navigator.vibrate) navigator.vibrate(20);
+      // Vibrate on every beat (30ms pulse)
+      const delay = Math.max(0, (time - ctx.currentTime) * 1000);
+      setTimeout(() => { if (navigator.vibrate) navigator.vibrate(30); }, delay);
     } catch(e) {}
   }, []);
 
   // Lookahead scheduler — runs every 25ms, schedules 100ms ahead
-  // This pattern is immune to setInterval throttling in background tabs
   const tick = useCallback(() => {
     if (!activeRef.current) return;
     const ctx = ctxRef.current;
     if (!ctx) return;
     const LOOK_AHEAD = 0.1; // seconds
     const INTERVAL = 60 / 110; // seconds per beat at 110 BPM
+    // Resync if we fell far behind (tab was backgrounded etc.)
+    if (nextRef.current < ctx.currentTime - 0.5) {
+      nextRef.current = ctx.currentTime + 0.05;
+    }
+    let guard = 0;
     while (nextRef.current < ctx.currentTime + LOOK_AHEAD) {
       scheduleBeep(ctx, nextRef.current);
       nextRef.current += INTERVAL;
+      if (++guard > 8) break; // safety — never schedule more than 8 beats at once
     }
     timerRef.current = setTimeout(tick, 25);
   }, [scheduleBeep]);
@@ -1355,6 +1708,38 @@ function useWakeLock() {
     acquire,
     release
   };
+}
+
+/* ══════════════════ FLASHLIGHT HOOK ════ */
+function useFlashlight() {
+  const [on, setOn] = useState(false);
+  const streamRef = useRef(null);
+  const trackRef = useRef(null);
+
+  const toggle = useCallback(async () => {
+    try {
+      if (!on) {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        const track = stream.getVideoTracks()[0];
+        await track.applyConstraints({ advanced: [{ torch: true }] });
+        streamRef.current = stream;
+        trackRef.current = track;
+        setOn(true);
+      } else {
+        if (trackRef.current) { await trackRef.current.applyConstraints({ advanced: [{ torch: false }] }); }
+        if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); }
+        streamRef.current = null; trackRef.current = null;
+        setOn(false);
+      }
+    } catch(e) { setOn(false); }
+  }, [on]);
+
+  useEffect(() => () => {
+    if (trackRef.current) try { trackRef.current.applyConstraints({ advanced: [{ torch: false }] }); } catch(e) {}
+    if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+  }, []);
+
+  return { on, toggle };
 }
 
 /* ══════════════════ VOICE HOOK ══════════ */
@@ -1438,8 +1823,8 @@ function Timer({
   const done = left === 0;
   const pct = (seconds - left) / seconds * 100;
   if (showCounter && cpr) return /*#__PURE__*/React.createElement(CprCounter, {
-    onClose: () => setShowCounter(false),
-    speak: speak
+    onClose: () => { metro.stop(); setShowCounter(false); },
+    metro: metro
   });
   return /*#__PURE__*/React.createElement("div", {
     className: "metro"
@@ -1483,14 +1868,10 @@ function Timer({
 }
 
 /* ══════════════════ CPR COUNTER ══════════ */
-function CprCounter({
-  onClose,
-  speak
-}) {
+function CprCounter({ onClose, metro }) {
   const [count, setCount] = useState(0);
   const [sets, setSets] = useState(0);
   const [beat, setBeat] = useState(false);
-  const metro = useMetronome();
   useEffect(() => {
     metro.start();
     return () => metro.stop();
@@ -1578,6 +1959,155 @@ function CprCounter({
   }, "\uD83D\uDCA8 2 \u0412\u0414\u041E\u0425\u0410!"));
 }
 
+/* ══════════════════ EVENT LOG ═══════════ */
+const EVENT_PRESETS = [
+  { icon: "💉", label: "Адреналин" },
+  { icon: "⚡", label: "Разряд AED" },
+  { icon: "⚠️", label: "ШОК" },
+  { icon: "🩸", label: "Остановка кровотечения" },
+  { icon: "🫁", label: "Интубация" },
+  { icon: "💊", label: "Амиодарон" },
+  { icon: "🔄", label: "Смена спасателя" },
+  { icon: "💓", label: "ROSC" },
+  { icon: "💧", label: "Инфузия" },
+  { icon: "📊", label: "Нет пульса" },
+];
+
+function EventLog({ log, onAdd, onClose }) {
+  const [copied, setCopied] = React.useState(false);
+  const fmt = ts => {
+    const d = new Date(ts);
+    return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  };
+  const shareText = log.map(ev => fmt(ev.ts) + '  ' + ev.text).join('\n');
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({ title: 'Журнал событий CPR', text: shareText }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(shareText).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch(() => {});
+    }
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: { position: 'fixed', inset: 0, background: C.bg, zIndex: 200, display: 'flex', flexDirection: 'column', maxWidth: 480, margin: '0 auto' }
+  },
+    /*#__PURE__*/React.createElement("div", { className: "hdr" },
+      /*#__PURE__*/React.createElement("button", { className: "back", onClick: onClose }, "←"),
+      /*#__PURE__*/React.createElement("div", { className: "hdr-t" }, "📋 Журнал событий"),
+      /*#__PURE__*/React.createElement("a", { href: "tel:112", className: "e112" }, "📞 112")
+    ),
+    /*#__PURE__*/React.createElement("div", { style: { padding: '12px 16px 8px', borderBottom: `1px solid ${C.border}` } },
+      /*#__PURE__*/React.createElement("div", { style: { fontSize: 11, color: C.textSec, marginBottom: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.5px' } }, "Быстрое добавление"),
+      /*#__PURE__*/React.createElement("div", { style: { display: 'flex', flexWrap: 'wrap', gap: 8 } },
+        EVENT_PRESETS.map(e => /*#__PURE__*/React.createElement("button", {
+          key: e.label,
+          onClick: () => onAdd(e.icon + ' ' + e.label),
+          style: { background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: '7px 12px', color: C.text, fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'Manrope',sans-serif" }
+        }, e.icon + ' ' + e.label))
+      )
+    ),
+    /*#__PURE__*/React.createElement("div", { style: { flex: 1, overflowY: 'auto', padding: '12px 16px' } },
+      log.length === 0
+        ? /*#__PURE__*/React.createElement("div", { style: { textAlign: 'center', color: C.textMuted, padding: '40px 0', fontSize: 14 } }, "Нет событий. Нажмите кнопку выше чтобы добавить.")
+        : [...log].reverse().map((ev, i) => /*#__PURE__*/React.createElement("div", {
+            key: i,
+            style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: C.card, borderRadius: 10, marginBottom: 8, border: `1px solid ${C.border}` }
+          },
+            /*#__PURE__*/React.createElement("div", { style: { fontWeight: 700, fontSize: 14 } }, ev.text),
+            /*#__PURE__*/React.createElement("div", { style: { fontSize: 12, color: C.textSec, fontVariantNumeric: 'tabular-nums', flexShrink: 0, marginLeft: 8 } }, fmt(ev.ts))
+          ))
+    ),
+    log.length > 0 && /*#__PURE__*/React.createElement("div", { style: { padding: '8px 16px 20px', borderTop: `1px solid ${C.border}` } },
+      /*#__PURE__*/React.createElement("button", {
+        onClick: handleShare,
+        style: { width: '100%', padding: '14px', background: C.green, border: 'none', borderRadius: 14, cursor: 'pointer', fontFamily: "'Manrope',sans-serif", fontWeight: 800, fontSize: 16, color: '#000', marginBottom: 10 }
+      }, copied ? "✅ Скопировано!" : "🚑 Передать бригаде"),
+      /*#__PURE__*/React.createElement("div", { style: { fontSize: 11, color: C.textSec, textAlign: 'center', marginBottom: 8 } }, "Покажите список бригаде скорой помощи"),
+      /*#__PURE__*/React.createElement("div", { style: { background: C.card, borderRadius: 12, padding: 14, fontSize: 12, lineHeight: 1.8, border: `1px solid ${C.border}`, whiteSpace: 'pre', overflowX: 'auto' } },
+        shareText
+      )
+    )
+  );
+}
+
+/* ══════════════════ DOSE CALCULATOR ═══ */
+function DoseCalc({ onClose }) {
+  const [weight, setWeight] = React.useState('');
+  const kg = parseFloat(weight) || 0;
+  const drugs = [
+    { name: "Адреналин (CPR)", unit: "мг IV/IO", dose: kg * 0.01, max: 1, note: "0.01 мг/кг, каждые 3–5 мин" },
+    { name: "Адреналин (анафилаксия)", unit: "мг IM", dose: kg * 0.01, max: 0.5, note: "0.01 мг/кг в бедро" },
+    { name: "Амиодарон", unit: "мг IV/IO", dose: kg * 5, max: 300, note: "5 мг/кг болюс" },
+    { name: "Лидокаин", unit: "мг IV/IO", dose: kg * 1, max: 100, note: "1 мг/кг" },
+    { name: "Атропин", unit: "мг IV", dose: kg * 0.02, max: 3, note: "0.02 мг/кг (мин. 0.1 мг)" },
+    { name: "Диазепам", unit: "мг ректально", dose: kg * 0.3, max: 10, note: "0.3 мг/кг" },
+    { name: "Мидазолам", unit: "мг IM/IN", dose: kg * 0.15, max: 10, note: "0.15 мг/кг" },
+    { name: "Налоксон", unit: "мг IV/IM", dose: kg * 0.01, max: 2, note: "0.01 мг/кг" },
+    { name: "Глюкоза 40%", unit: "мл IV", dose: kg * 0.5, max: 50, note: "0.5 мл/кг (= 0.2 г/кг глюкозы)" },
+    { name: "NaCl 0.9% (болюс)", unit: "мл IV", dose: kg * 20, max: 1000, note: "20 мл/кг за 15–20 мин" },
+  ];
+  const fmt = v => v < 0.1 ? v.toFixed(3) : v < 10 ? v.toFixed(2) : v.toFixed(1);
+  const clamp = (dose, max) => Math.min(dose, max);
+  return /*#__PURE__*/React.createElement("div", {
+    style: { position: 'fixed', inset: 0, background: C.bg, zIndex: 200, display: 'flex', flexDirection: 'column', maxWidth: 480, margin: '0 auto' }
+  },
+    /*#__PURE__*/React.createElement("div", { className: "hdr" },
+      /*#__PURE__*/React.createElement("button", { className: "back", onClick: onClose }, "←"),
+      /*#__PURE__*/React.createElement("div", { className: "hdr-t" }, "💊 Калькулятор доз"),
+      /*#__PURE__*/React.createElement("a", { href: "tel:112", className: "e112" }, "📞 112")
+    ),
+    /*#__PURE__*/React.createElement("div", { style: { padding: '16px', borderBottom: `1px solid ${C.border}` } },
+      /*#__PURE__*/React.createElement("div", { style: { fontWeight: 700, fontSize: 13, color: C.textSec, marginBottom: 8 } }, "МАССА ТЕЛА ПАЦИЕНТА"),
+      /*#__PURE__*/React.createElement("div", { style: { display: 'flex', gap: 8, alignItems: 'center' } },
+        /*#__PURE__*/React.createElement("input", {
+          type: "number",
+          placeholder: "кг",
+          value: weight,
+          onChange: e => setWeight(e.target.value),
+          style: { flex: 1, padding: '13px 16px', background: C.card, border: `2px solid ${kg > 0 ? C.blue : C.border}`, borderRadius: 12, color: C.text, fontSize: 22, fontWeight: 800, fontFamily: "'Manrope',sans-serif", outline: 'none' }
+        }),
+        /*#__PURE__*/React.createElement("div", { style: { fontSize: 13, color: C.textSec, fontWeight: 600 } }, "кг"),
+        [10,20,30,60,80].map(w => /*#__PURE__*/React.createElement("button", {
+          key: w,
+          onClick: () => setWeight(String(w)),
+          style: { padding: '8px 10px', background: weight == w ? C.blue : C.card, border: `1px solid ${C.border}`, borderRadius: 10, color: weight == w ? '#fff' : C.text, fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: "'Manrope',sans-serif" }
+        }, w))
+      ),
+      kg > 0 && /*#__PURE__*/React.createElement("div", { style: { marginTop: 8, fontSize: 12, color: C.textSec } },
+        "Рост (оценка): ~", Math.round(kg * 2 + 50), " см · Возраст (оценка): ", kg < 15 ? "ребёнок" : kg < 30 ? "подросток" : "взрослый"
+      )
+    ),
+    /*#__PURE__*/React.createElement("div", { style: { flex: 1, overflowY: 'auto', padding: '12px 16px' } },
+      kg <= 0
+        ? /*#__PURE__*/React.createElement("div", { style: { textAlign: 'center', color: C.textMuted, padding: '40px 0 20px', fontSize: 14 } }, "Введите массу тела для расчёта доз")
+        : drugs.map(d => {
+            const dose = clamp(d.dose, d.max);
+            const capped = d.dose > d.max;
+            return /*#__PURE__*/React.createElement("div", {
+              key: d.name,
+              style: { background: C.card, borderRadius: 14, padding: '14px 16px', marginBottom: 10, border: `1px solid ${C.border}` }
+            },
+              /*#__PURE__*/React.createElement("div", { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' } },
+                /*#__PURE__*/React.createElement("div", { style: { fontWeight: 800, fontSize: 14, flex: 1 } }, d.name),
+                /*#__PURE__*/React.createElement("div", {
+                  style: { fontWeight: 900, fontSize: 20, color: capped ? C.orange : C.green, flexShrink: 0, marginLeft: 10 }
+                }, fmt(dose), " ", d.unit)
+              ),
+              /*#__PURE__*/React.createElement("div", { style: { fontSize: 12, color: C.textSec, marginTop: 4 } }, d.note),
+              capped && /*#__PURE__*/React.createElement("div", { style: { fontSize: 11, color: C.orange, marginTop: 4, fontWeight: 700 } },
+                "⚠️ Ограничено максимумом (расчёт: ", fmt(d.dose), " " + d.unit + ")"
+              )
+            );
+          }),
+      /*#__PURE__*/React.createElement("div", { style: { fontSize: 11, color: C.textMuted, textAlign: 'center', padding: '12px 0 20px', lineHeight: 1.5 } },
+        "⚠️ Калькулятор — вспомогательный инструмент.\nВсегда верифицируйте дозы по официальным протоколам."
+      )
+    )
+  );
+}
+
 /* ══════════════════ MAIN APP ════════════ */
 function App() {
   const [s, set] = useState({
@@ -1589,6 +2119,8 @@ function App() {
     rhythmType: null,
     isOnline: navigator.onLine
   });
+  const [eventLog, setEventLog] = useState([]);
+  const [showLog, setShowLog] = useState(false);
   const upd = o => set(prev => ({
     ...prev,
     ...o
@@ -1597,8 +2129,10 @@ function App() {
     screen,
     ...extra
   });
+  const addEvent = text => setEventLog(prev => [...prev, { text, ts: Date.now() }]);
   const voice = useVoice();
   const wakeLock = useWakeLock();
+  const flash = useFlashlight();
   useEffect(() => {
     const on = () => upd({
         isOnline: true

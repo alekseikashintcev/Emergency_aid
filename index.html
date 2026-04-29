@@ -444,9 +444,31 @@ html,body{font-family:'Manrope',-apple-system,system-ui,sans-serif;background:${
 .tog-sw.on{background:${C.green};}
 .tog-sw::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;}
 .tog-sw.on::after{transform:translateX(20px);}
+.anim{margin:12px 0;padding:12px;background:${C.bg};border:1px solid ${C.border};border-radius:12px;overflow:hidden;}
+.anim-icons{height:58px;display:flex;align-items:center;justify-content:center;gap:18px;font-size:34px;}
+.anim-caption{text-align:center;font-size:11px;color:${C.textSec};font-weight:700;letter-spacing:.2px;}
+.anim-symbol{display:inline-flex;align-items:center;justify-content:center;min-width:38px;animation:animPulse 1.4s ease-in-out infinite;}
+.anim-cpr .anim-symbol:first-child{animation:animPress .62s ease-in-out infinite;}
+.anim-breaths .anim-symbol:first-child{animation:animAir 1.4s ease-in-out infinite;}
+.anim-naloxone .anim-symbol:nth-child(2){animation:animSpray 1.2s ease-in-out infinite;}
+.anim-aed .anim-symbol:nth-child(2){animation:animFlash .9s ease-in-out infinite;}
+.anim-epi .anim-symbol:first-child{animation:animInject 1.4s ease-in-out infinite;}
+.anim-stroke .anim-symbol{animation:animStep 2.8s ease-in-out infinite;}
+.anim-stroke .anim-symbol:nth-child(2){animation-delay:.35s;}
+.anim-stroke .anim-symbol:nth-child(3){animation-delay:.7s;}
+.anim-stroke .anim-symbol:nth-child(4){animation-delay:1.05s;}
+.anim-recovery .anim-symbol:first-child{animation:animRoll 1.6s ease-in-out infinite;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes animPulse{0%,100%{transform:scale(1);opacity:.75}50%{transform:scale(1.12);opacity:1}}
+@keyframes animPress{0%,100%{transform:translateY(-8px)}50%{transform:translateY(10px) scale(.92)}}
+@keyframes animAir{0%{transform:translateX(-14px);opacity:.25}50%{transform:translateX(8px);opacity:1}100%{transform:translateX(20px);opacity:.15}}
+@keyframes animSpray{0%,100%{transform:translateX(0) rotate(0)}50%{transform:translateX(-10px) rotate(-12deg)}}
+@keyframes animFlash{0%,100%{transform:scale(.9);filter:brightness(1)}50%{transform:scale(1.25);filter:brightness(1.8)}}
+@keyframes animInject{0%,100%{transform:translateX(-12px) rotate(-18deg)}50%{transform:translateX(10px) rotate(-18deg)}}
+@keyframes animStep{0%,70%,100%{opacity:.35;transform:translateY(0)}25%{opacity:1;transform:translateY(-5px)}}
+@keyframes animRoll{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(18deg)}}
 .pulse{animation:pulse 2s infinite;}
 `;
 
@@ -489,18 +511,21 @@ const P = {
         hl: "r",
         timer: 120,
         timerLabel: "2 минуты CPR",
-        cpr: true
+        cpr: true,
+        anim: "cpr"
       }, {
         id: 6,
         icon: "💨",
         title: "30 компрессий : 2 вдоха",
-        text: "После 30 компрессий — 2 вдоха:\n• Зажмите нос, охватите рот губами\n• Вдувайте 1 секунду до подъёма груди\n\nНЕ УВЕРЕНЫ в технике? Делайте только компрессии — это тоже эффективно!"
+        text: "После 30 компрессий — 2 вдоха:\n• Зажмите нос, охватите рот губами\n• Вдувайте 1 секунду до подъёма груди\n\nНЕ УВЕРЕНЫ в технике? Делайте только компрессии — это тоже эффективно!",
+        anim: "breaths"
       }, {
         id: 7,
         icon: "⚡",
         title: "Использование AED",
         text: "Включите AED → следуйте голосовым инструкциям.\nПриклейте электроды как на картинке.\nПосле разряда → СРАЗУ продолжайте компрессии!",
-        hl: "y"
+        hl: "y",
+        anim: "aed"
       }, {
         id: 8,
         icon: "🔄",
@@ -517,13 +542,15 @@ const P = {
         text: "Мешок-маска + О₂. Монитор/дефибриллятор.\nКомпрессии ≥5 см, 100–120/мин. Соотношение 30:2 (без продвинутых ДП).\nПри продвинутых ДП: непрерывные компрессии + 1 вдох каждые 6 сек.",
         timer: 120,
         timerLabel: "2 мин CPR",
-        cpr: true
+        cpr: true,
+        anim: "cpr"
       }, {
         id: 2,
         icon: "⚡",
         title: "Дефибрилляция (VF/pVT)",
         text: "Бифазный: 120–200 Дж (или максимальный)\nМонофазный: 360 Дж\nПосле разряда → НЕМЕДЛЕННО продолжить CPR 2 мин.",
-        hl: "o"
+        hl: "o",
+        anim: "aed"
       }, {
         id: 3,
         icon: "💉",
@@ -554,7 +581,8 @@ const P = {
         text: "Мешок-маска + О₂. Монитор. IV/IO доступ.\nКомпрессии ≥5 см, 100–120/мин.",
         timer: 120,
         timerLabel: "2 мин CPR",
-        cpr: true
+        cpr: true,
+        anim: "cpr"
       }, {
         id: 2,
         icon: "💊",
@@ -603,7 +631,8 @@ const P = {
         icon: "💨",
         title: "Открыть ДП → 2 спасательных вдоха",
         text: "Запрокинуть голову + поднять подбородок.\nДать 2 вдоха: грудь должна подниматься.\n\nМладенцы: охватить рот И нос.",
-        hl: "r"
+        hl: "r",
+        anim: "breaths"
       }, {
         id: 4,
         icon: "🤲",
@@ -611,7 +640,8 @@ const P = {
         text: "МЕСТО:\n• Младенец (до 1 года): 2 пальца на 1 палец ниже центра грудины\n• Ребёнок: 1–2 ладони, центр груди\n\nГЛУБИНА: ≥1/3 глубины груди (~4–5 см)\nЧАСТОТА: 100–120/мин",
         timer: 120,
         timerLabel: "2 минуты CPR",
-        cpr: true
+        cpr: true,
+        anim: "cpr"
       }, {
         id: 5,
         icon: "🔢",
@@ -621,7 +651,8 @@ const P = {
         id: 6,
         icon: "⚡",
         title: "AED для ребёнка",
-        text: "До 8 лет / <25 кг: педиатрические электроды/режим (если есть).\nЕсли нет → используйте взрослый режим."
+        text: "До 8 лет / <25 кг: педиатрические электроды/режим (если есть).\nЕсли нет → используйте взрослый режим.",
+        anim: "aed"
       }, {
         id: 7,
         icon: "🔄",
@@ -1201,7 +1232,8 @@ const P = {
         icon: "💉",
         title: "Адреналин-авто-инжектор (EpiPen)",
         text: "Если есть EpiPen/Auvi-Q:\n→ Вколоть в наружную поверхность бедра\n→ Держать 10 секунд\n→ Можно прямо через одежду!\n\nЕсли нет авто-инжектора → ждите скорую, сообщите 112.",
-        hl: "r"
+        hl: "r",
+        anim: "epi"
       }, {
         id: 3,
         icon: "🛏️",
@@ -1272,7 +1304,8 @@ const P = {
         icon: "🔍",
         title: "Тест FAST — проверьте прямо сейчас",
         text: "F — Лицо: улыбнитесь → один угол рта опускается?\nA — Руки: поднимите обе → одна опускается/слабее?\nS — Речь: повторите фразу → неразборчиво / странно?\nT — Время: даже 1 «да» → НЕМЕДЛЕННО 112!",
-        hl: "y"
+        hl: "y",
+        anim: "stroke"
       }, {
         id: 2,
         icon: "📞",
@@ -1363,7 +1396,8 @@ const P = {
         id: 4,
         icon: "🔄",
         title: "После приступа",
-        text: "Осторожно поверните на бок (восстановительное положение).\nПациент будет спутан 5–30 мин — это нормальная постиктальная фаза.\nОставайтесь рядом, говорите спокойно."
+        text: "Осторожно поверните на бок (восстановительное положение).\nПациент будет спутан 5–30 мин — это нормальная постиктальная фаза.\nОставайтесь рядом, говорите спокойно.",
+        anim: "recovery"
       }, {
         id: 5,
         icon: "📞",
@@ -1406,6 +1440,86 @@ const P = {
     }
   },
 
+  /* ── ПЕРЕДОЗИРОВКА ОПИОИДАМИ / НАЛОКСОН ── */
+  overdose: {
+    id: "overdose",
+    title: "Передозировка / налоксон",
+    icon: "💊",
+    color: C.orange,
+    severity: "critical",
+    basic: {
+      intro: "Подозрение на опиоидную передозировку: сонливость/без сознания + медленное, шумное или отсутствующее дыхание. Действуйте сразу.",
+      steps: [{
+        id: 1,
+        icon: "📞",
+        title: "Немедленно 112",
+        text: "Скажите: «Подозрение на передозировку, дыхание замедлено/нет дыхания».\nПопросите принести налоксон и AED, если они доступны.",
+        hl: "r"
+      }, {
+        id: 2,
+        icon: "🔍",
+        title: "Признаки передозировки",
+        text: "• Не просыпается / не отвечает\n• Дыхание редкое, шумное, хрипящее или отсутствует\n• Синие/серые губы или ногти\n• Очень маленькие зрачки\n\nЕсли сомневаетесь — действуйте как при передозировке.",
+        hl: "y"
+      }, {
+        id: 3,
+        icon: "💊",
+        title: "Налоксон — если есть",
+        text: "Используйте готовый назальный спрей по инструкции устройства:\n1 доза в одну ноздрю.\nЕсли через 2–3 мин нет нормального дыхания/реакции — дать следующую дозу, если есть.\n\nНалоксон не заменяет 112 и CPR.",
+        timer: 180,
+        timerLabel: "2–3 мин до повторной дозы",
+        hl: "r",
+        anim: "naloxone"
+      }, {
+        id: 4,
+        icon: "💨",
+        title: "Дыхание / CPR",
+        text: "Нет нормального дыхания или нет пульса → CPR.\nЕсли пульс есть, но дыхание слабое/редкое — поддерживайте дыхание, если обучены.\nAED применяйте как обычно, если он доступен.",
+        timer: 120,
+        timerLabel: "2 мин контроль",
+        cpr: true,
+        anim: "cpr"
+      }, {
+        id: 5,
+        icon: "🔄",
+        title: "После улучшения",
+        text: "Поверните на бок, если дыхание восстановилось.\nОставайтесь рядом: действие налоксона может закончиться раньше, чем действие опиоида.\nНе давайте есть/пить. Передайте бригаде время доз.",
+        hl: "b",
+        anim: "recovery"
+      }]
+    },
+    medical: {
+      intro: "Опиоидная токсичность: приоритет — вентиляция/оксигенация. Налоксон применять без задержки, но не вместо ABC.",
+      steps: [{
+        id: 1,
+        icon: "🫁",
+        title: "ABC + вентиляция",
+        text: "Оценить дыхание и пульс. O₂, мешок-маска, мониторинг SpO₂/ЭКГ.\nПри остановке дыхания/кровообращения → стандартный BLS/ACLS.",
+        hl: "r",
+        anim: "cpr"
+      }, {
+        id: 2,
+        icon: "💊",
+        title: "Налоксон",
+        text: "Назально/IM/IV по локальному протоколу. Цель — восстановить адекватное дыхание, не обязательно полное пробуждение.\nПовторные дозы могут потребоваться, особенно при синтетических опиоидах.",
+        timer: 180,
+        timerLabel: "2–3 мин переоценка",
+        anim: "naloxone"
+      }, {
+        id: 3,
+        icon: "📊",
+        title: "Переоценка",
+        text: "Каждые 2–3 мин: дыхание, SpO₂, сознание, пульс.\nГотовность к рвоте/аспирации, гипоксии, рецидиву угнетения дыхания.",
+        hl: "y"
+      }, {
+        id: 4,
+        icon: "🏥",
+        title: "Транспортировка",
+        text: "Наблюдение обязательно: симптомы могут вернуться.\nПередайте время и количество доз налоксона, исходное дыхание, реакцию на терапию."
+      }]
+    }
+  },
+
   /* ── УТОПЛЕНИЕ ── */
   drowning: {
     id: "drowning",
@@ -1432,7 +1546,8 @@ const P = {
         icon: "💨",
         title: "СНАЧАЛА — 5 спасательных вдохов!",
         text: "НЕ как обычный CPR — начинайте с ВДОХОВ!\nЗапрокиньте голову, поднимите подбородок.\nДайте 5 вдохов (1 сек каждый) — грудь должна подниматься.",
-        hl: "r"
+        hl: "r",
+        anim: "breaths"
       }, {
         id: 4,
         icon: "🤲",
@@ -1440,7 +1555,8 @@ const P = {
         text: "После 5 вдохов → 30 компрессий + 2 вдоха.\n100–120/мин, глубина ≥5 см.\nПродолжайте до приезда скорой.",
         timer: 120,
         timerLabel: "2 мин CPR",
-        cpr: true
+        cpr: true,
+        anim: "cpr"
       }, {
         id: 5,
         icon: "🌡️",
@@ -1497,6 +1613,9 @@ const QTREE = {
     }, {
       label: "⚡ Судороги / трясётся",
       next: "SEIZURES"
+    }, {
+      label: "💊 Передозировка / опиоиды",
+      next: "OVERDOSE"
     }, {
       label: "❌ Нет, без сознания",
       next: "q3"
@@ -1556,6 +1675,9 @@ const QTREE = {
       label: "📉 Медленный / редкий пульс",
       next: "BRADY"
     }, {
+      label: "💊 Сонливость / возможная передозировка",
+      next: "OVERDOSE"
+    }, {
       label: "💫 Другое / обморок / слабость",
       next: "SYNCOPE"
     }]
@@ -1579,6 +1701,17 @@ const QTREE = {
       next: "SYNCOPE"
     }, {
       label: "❌ Нет / только хрипы / гаспинг",
+      next: "q4b"
+    }]
+  },
+  q4b: {
+    text: "Есть подозрение на опиоиды / передозировку?",
+    sub: "Таблетки, порошок, шприц рядом; очень сонный/без сознания; редкое дыхание; синие губы; маленькие зрачки?",
+    options: [{
+      label: "💊 Да — подозрение на передозировку",
+      next: "OVERDOSE"
+    }, {
+      label: "🚫 Нет / неизвестно",
       next: "q5"
     }]
   },
@@ -1605,6 +1738,7 @@ function getDiagnosis(code, patientType) {
     ANAPHYLAXIS: "anaphylaxis",
     STROKE: "stroke",
     SEIZURES: "seizures",
+    OVERDOSE: "overdose",
     DROWNING: "drowning"
   };
   return map[code] || "syncope";
@@ -1959,6 +2093,30 @@ function CprCounter({ onClose, metro }) {
   }, "\uD83D\uDCA8 2 \u0412\u0414\u041E\u0425\u0410!"));
 }
 
+/* ══════════════════ OFFLINE ANIMATIONS ═ */
+function MiniAnimation({ type }) {
+  const cfg = {
+    cpr: { icons: ["🤲", "▭"], caption: "Компрессии: центр груди, 100–120/мин" },
+    breaths: { icons: ["💨", "😮"], caption: "Вдох 1 секунда — грудь поднимается" },
+    naloxone: { icons: ["👃", "💊", "💨"], caption: "Налоксон: спрей в нос, затем ждите 2–3 мин" },
+    aed: { icons: ["⬛", "⚡", "⬛"], caption: "AED: включить, наклеить электроды, всем отойти" },
+    epi: { icons: ["💉", "🦵"], caption: "Автоинжектор: наружная поверхность бедра" },
+    stroke: { icons: ["🙂", "🙌", "🗣️", "⏱️"], caption: "FAST: лицо, руки, речь, время" },
+    recovery: { icons: ["↻", "🧍"], caption: "После приступа: осторожно повернуть на бок" }
+  }[type] || { icons: ["ℹ️"], caption: "Короткая подсказка" };
+  return /*#__PURE__*/React.createElement("div", {
+    className: `anim anim-${type || "info"}`,
+    "aria-label": cfg.caption
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "anim-icons"
+  }, cfg.icons.map((icon, i) => /*#__PURE__*/React.createElement("span", {
+    key: i,
+    className: "anim-symbol"
+  }, icon))), /*#__PURE__*/React.createElement("div", {
+    className: "anim-caption"
+  }, cfg.caption));
+}
+
 /* ══════════════════ EVENT LOG ═══════════ */
 const EVENT_PRESETS = [
   { icon: "💉", label: "Дан адреналин" },
@@ -2108,6 +2266,135 @@ function DoseCalc({ onClose }) {
   );
 }
 
+/* ══════════════════ HANDOFF CARD ═══════ */
+function HandoffCard({ state, proto, log, onClose }) {
+  const [copied, setCopied] = React.useState(false);
+  const fmt = ts => ts ? new Date(ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—';
+  const patientLabel = {
+    adult: "Взрослый",
+    child: "Ребёнок",
+    pregnant: "Беременная",
+    elderly: "Пожилой"
+  }[state.patientType] || "Не указано";
+  const trainingLabel = state.trainingLevel === "medical" ? "Медперсонал" : "Первая помощь";
+  const rhythmLabel = state.rhythmType === "shockable" ? "VF/pVT (шоковый)" : state.rhythmType === "nonShockable" ? "Асистолия/PEA" : "Не выбран";
+  const eventText = log.length ? log.map(ev => `${fmt(ev.ts)}  ${ev.text}`).join('\n') : 'События не добавлены';
+  const handoffText = [
+    'ПЕРЕДАЧА БРИГАДЕ',
+    `Сейчас: ${fmt(Date.now())}`,
+    `Начало сценария: ${fmt(state.caseStartedAt)}`,
+    `Пациент: ${patientLabel}`,
+    `Уровень: ${trainingLabel}`,
+    `Протокол: ${proto ? proto.title : 'не выбран'}`,
+    state.rhythmType ? `Ритм: ${rhythmLabel}` : null,
+    '',
+    'MIST/SBAR:',
+    `M/S: ${proto ? proto.title : 'состояние не выбрано'}`,
+    `I/B: ${patientLabel}, ${trainingLabel}`,
+    `T/R: см. журнал действий ниже`,
+    '',
+    'ЖУРНАЛ:',
+    eventText
+  ].filter(Boolean).join('\n');
+  const copy = () => {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(handoffText).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {});
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: { position: 'fixed', inset: 0, background: C.bg, zIndex: 220, display: 'flex', flexDirection: 'column', maxWidth: 480, margin: '0 auto' }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hdr"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "back",
+    onClick: onClose
+  }, "←"), /*#__PURE__*/React.createElement("div", {
+    className: "hdr-t"
+  }, "🚑 Передача бригаде"), /*#__PURE__*/React.createElement("a", {
+    href: "tel:112",
+    className: "e112"
+  }, "📞 112")), /*#__PURE__*/React.createElement("div", {
+    className: "body"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 16, marginBottom: 12 }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 12, color: C.textSec, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 8 }
+  }, "Коротко"), /*#__PURE__*/React.createElement("div", {
+    style: { display: 'grid', gap: 8, fontSize: 14, lineHeight: 1.45 }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Пациент: "), patientLabel), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Протокол: "), proto ? proto.title : "не выбран"), state.rhythmType && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Ритм: "), rhythmLabel), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Начало: "), fmt(state.caseStartedAt)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Событий: "), log.length))), /*#__PURE__*/React.createElement("div", {
+    style: { background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 14, fontSize: 12, lineHeight: 1.75, whiteSpace: 'pre-wrap' }
+  }, handoffText)), /*#__PURE__*/React.createElement("div", {
+    className: "footer"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-grn",
+    onClick: copy,
+    style: { marginBottom: 8 }
+  }, copied ? "✅ Скопировано" : "📋 Скопировать карточку"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-sec",
+    onClick: onClose
+  }, "Закрыть")));
+}
+
+/* ══════════════════ HELPER MODE ════════ */
+function HelperMode({ onClose, onAdd }) {
+  const [assigned, setAssigned] = React.useState({});
+  const tasks = [
+    { id: "call", icon: "📞", title: "Вызови 112", sub: "Оставайся на линии, включи громкую связь" },
+    { id: "aed", icon: "⚡", title: "Найди AED", sub: "Принеси дефибриллятор и включи его" },
+    { id: "compress", icon: "🤲", title: "Смена на CPR", sub: "Сменить компрессии через 2 минуты" },
+    { id: "meet", icon: "🚪", title: "Встреть скорую", sub: "Открой дверь, проведи бригаду кратчайшим путём" },
+    { id: "log", icon: "📋", title: "Веди журнал", sub: "Фиксируй лекарства, разряды, время событий" },
+    { id: "space", icon: "🛡️", title: "Освободи место", sub: "Убери лишних людей, обеспечь безопасность" }
+  ];
+  const toggle = task => {
+    setAssigned(prev => {
+      const next = { ...prev, [task.id]: !prev[task.id] };
+      if (!prev[task.id]) onAdd("👥 Назначен помощник: " + task.title);
+      return next;
+    });
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: { position: 'fixed', inset: 0, background: C.bg, zIndex: 220, display: 'flex', flexDirection: 'column', maxWidth: 480, margin: '0 auto' }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hdr"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "back",
+    onClick: onClose
+  }, "←"), /*#__PURE__*/React.createElement("div", {
+    className: "hdr-t"
+  }, "👥 Помощники"), /*#__PURE__*/React.createElement("a", {
+    href: "tel:112",
+    className: "e112"
+  }, "📞 112")), /*#__PURE__*/React.createElement("div", {
+    className: "body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "banner"
+  }, /*#__PURE__*/React.createElement("span", {
+    style: { fontSize: 20, flexShrink: 0 }
+  }, "🎯"), /*#__PURE__*/React.createElement("div", {
+    style: { fontSize: 13, color: C.textSec, lineHeight: 1.5 }
+  }, "Говорите коротко и назначайте конкретного человека: «Вы, в синей куртке, звоните 112». Отмеченные задачи попадут в журнал.")), /*#__PURE__*/React.createElement("div", {
+    className: "opts"
+  }, tasks.map(task => /*#__PURE__*/React.createElement("button", {
+    key: task.id,
+    className: `opt${assigned[task.id] ? " sel" : ""}`,
+    onClick: () => toggle(task)
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "opt-ico"
+  }, task.icon), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "opt-lbl"
+  }, assigned[task.id] ? "✓ " : "", task.title), /*#__PURE__*/React.createElement("div", {
+    className: "opt-sub"
+  }, task.sub)))))), /*#__PURE__*/React.createElement("div", {
+    className: "footer"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-red",
+    onClick: onClose
+  }, "Готово")));
+}
+
 /* ══════════════════ MAIN APP ════════════ */
 function App() {
   const [s, set] = useState({
@@ -2118,18 +2405,31 @@ function App() {
     protocolId: null,
     rhythmType: null,
     specialistBack: null,
+    caseStartedAt: null,
     isOnline: navigator.onLine
   });
   const [eventLog, setEventLog] = useState([]);
   const [showLog, setShowLog] = useState(false);
   const [showDose, setShowDose] = useState(false);
+  const [showHandoff, setShowHandoff] = useState(false);
+  const [showHelpers, setShowHelpers] = useState(false);
   const upd = o => set(prev => ({
     ...prev,
     ...o
   }));
-  const go = (screen, extra = {}) => upd({
-    screen,
-    ...extra
+  const go = (screen, extra = {}) => set(prev => {
+    const next = {
+      ...prev,
+      screen,
+      ...extra
+    };
+    if ((screen === "diagnosis" || screen === "steps") && !next.caseStartedAt) {
+      next.caseStartedAt = Date.now();
+    }
+    if (screen === "welcome") {
+      next.caseStartedAt = null;
+    }
+    return next;
   });
   const addEvent = text => setEventLog(prev => [...prev, { text, ts: Date.now() }]);
   const voice = useVoice();
@@ -2189,6 +2489,16 @@ function App() {
   }));
   if (showDose) return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("style", null, CSS), /*#__PURE__*/React.createElement(DoseCalc, {
     onClose: () => setShowDose(false)
+  }));
+  if (showHandoff) return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("style", null, CSS), /*#__PURE__*/React.createElement(HandoffCard, {
+    state: s,
+    proto: proto,
+    log: eventLog,
+    onClose: () => setShowHandoff(false)
+  }));
+  if (showHelpers) return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("style", null, CSS), /*#__PURE__*/React.createElement(HelperMode, {
+    onClose: () => setShowHelpers(false),
+    onAdd: addEvent
   }));
 
   /* ─── WELCOME ─── */
@@ -2747,7 +3057,9 @@ function App() {
       }
     }, step.icon), step.title), /*#__PURE__*/React.createElement("div", {
       className: "stxt"
-    }, step.text), voice.enabled && /*#__PURE__*/React.createElement("button", {
+    }, step.text), step.anim && /*#__PURE__*/React.createElement(MiniAnimation, {
+      type: step.anim
+    }), voice.enabled && /*#__PURE__*/React.createElement("button", {
       style: {background:"none",border:"none",cursor:"pointer",fontSize:16,padding:"4px 0",opacity:.55,display:"block",marginTop:4},
       title: "Озвучить",
       onClick: () => voice.speak((step.title||"") + ". " + (step.text||""))
@@ -2802,6 +3114,22 @@ function App() {
       },
       onClick: () => setShowLog(true)
     }, "+ Событие", eventLog.length > 0 ? ` (${eventLog.length})` : ""), /*#__PURE__*/React.createElement("button", {
+      className: "btn btn-sec",
+      style: {
+        fontSize: 12,
+        padding: "10px 6px",
+        minHeight: 44
+      },
+      onClick: () => setShowHandoff(true)
+    }, "\uD83D\uDE91 \u041F\u0435\u0440\u0435\u0434\u0430\u0442\u044C"), /*#__PURE__*/React.createElement("button", {
+      className: "btn btn-sec",
+      style: {
+        fontSize: 12,
+        padding: "10px 6px",
+        minHeight: 44
+      },
+      onClick: () => setShowHelpers(true)
+    }, "\uD83D\uDC65 \u041F\u043E\u043C\u043E\u0449\u043D\u0438\u043A\u0438"), /*#__PURE__*/React.createElement("button", {
       className: "btn btn-sec",
       style: {
         fontSize: 12,

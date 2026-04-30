@@ -1748,9 +1748,12 @@ function getDiagnosis(code, patientType) {
 function useMetronome() {
   const ctxRef = useRef(null);
   const timerRef = useRef(null);
+  const vibIntervalRef = useRef(null);
   const nextRef = useRef(0);
   const activeRef = useRef(false);
   const [active, setActive] = useState(false);
+
+  const BPM_INTERVAL = Math.round(60000 / 110); // ~545ms at 110 BPM
 
   const getCtx = useCallback(() => {
     if (!ctxRef.current) {
@@ -1770,9 +1773,6 @@ function useMetronome() {
       gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
       osc.start(time);
       osc.stop(time + 0.1);
-      // Vibrate on every beat (30ms pulse)
-      const delay = Math.max(0, (time - ctx.currentTime) * 1000);
-      setTimeout(() => { if (navigator.vibrate) navigator.vibrate(30); }, delay);
     } catch(e) {}
   }, []);
 
@@ -1796,28 +1796,54 @@ function useMetronome() {
     timerRef.current = setTimeout(tick, 25);
   }, [scheduleBeep]);
 
+  const startVibration = useCallback(() => {
+    if (!navigator.vibrate) return;
+    // Fire immediately (we're still inside the user-gesture call stack)
+    navigator.vibrate(40);
+    // Then keep a dedicated interval — independent of the audio lookahead
+    clearInterval(vibIntervalRef.current);
+    vibIntervalRef.current = setInterval(() => {
+      if (navigator.vibrate) navigator.vibrate(40);
+    }, BPM_INTERVAL);
+  }, [BPM_INTERVAL]);
+
+  const stopVibration = useCallback(() => {
+    clearInterval(vibIntervalRef.current);
+    vibIntervalRef.current = null;
+    if (navigator.vibrate) navigator.vibrate(0);
+  }, []);
+
   const start = useCallback(async () => {
     try {
+      // Prime vibration BEFORE any await — must stay in user-gesture call stack
+      if (navigator.vibrate) navigator.vibrate(1);
       const ctx = getCtx();
       if (ctx.state === 'suspended') await ctx.resume();
       activeRef.current = true;
       nextRef.current = ctx.currentTime + 0.05;
       setActive(true);
+      startVibration();
       tick();
     } catch(e) {}
-  }, [getCtx, tick]);
+  }, [getCtx, tick, startVibration]);
 
   const stop = useCallback(() => {
     activeRef.current = false;
     clearTimeout(timerRef.current);
+    stopVibration();
     setActive(false);
-  }, []);
+  }, [stopVibration]);
 
   const toggle = useCallback(() => {
     if (activeRef.current) stop(); else start();
   }, [start, stop]);
 
-  useEffect(() => () => { activeRef.current = false; clearTimeout(timerRef.current); }, []);
+  useEffect(() => () => {
+    activeRef.current = false;
+    clearTimeout(timerRef.current);
+    clearInterval(vibIntervalRef.current);
+    if (navigator.vibrate) navigator.vibrate(0);
+  }, []);
 
   return { active, toggle, start, stop };
 }
@@ -1933,7 +1959,7 @@ function Timer({
     if (!startedRef.current) return;
     if (left === 0) {
       setRun(false);
-      metro.stop();
+      metro.stop(); // eslint-disable-line react-hooks/exhaustive-deps
     }
   }, [left]);
 

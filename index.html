@@ -7,6 +7,20 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="description" content="Экстренная первая помощь — AHA 2025. Работает офлайн."/>
+  <link rel="manifest" href="manifest.json"/>
+
+  <!-- iOS иконки -->
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png"/>
+  <link rel="apple-touch-icon" sizes="167x167" href="icon-167.png"/>
+  <link rel="apple-touch-icon" sizes="152x152" href="icon-152.png"/>
+  <link rel="apple-touch-icon" sizes="144x144" href="icon-144.png"/>
+  <link rel="apple-touch-icon" sizes="120x120" href="icon-120.png"/>
+  <link rel="apple-touch-icon" sizes="76x76"   href="icon-76.png"/>
+  <link rel="apple-touch-icon" href="icon-180.png"/>
+
+  <!-- iOS meta -->
+  <meta name="apple-mobile-web-app-title" content="Первая помощь"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
   <title>🚨 Экстренная первая помощь</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -3319,6 +3333,15 @@ if (loadingEl) loadingEl.remove();
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(/*#__PURE__*/React.createElement(App, null));
 
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js')
+      .then(function(r){ console.log('SW OK:', r.scope); })
+      .catch(function(e){ console.warn('SW err:', e); });
+  });
+}
 </script>
 </body>
 </html>
